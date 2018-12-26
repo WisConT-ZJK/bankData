@@ -1,6 +1,7 @@
 {
     "status_code": 0,
     "message": "获取搜索结果成功",
+    "total": 6,
     "data": [
         {
             "id": "1",

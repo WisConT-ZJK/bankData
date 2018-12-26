@@ -1,4 +1,9 @@
 $(() => {
+    if(!checkLoginStatus()) {
+        location.href = 'login.html';
+        return;
+    }
+
     $('.search-btn').on('click', function() {
         let queryStr = $('#bank-search').val();
 
@@ -29,6 +34,8 @@ $(() => {
 
                     $('.search-result >p').hide();
                     $('.search-result >table').show();
+
+                    $('.search-result >table tbody').empty();
                     $('.search-result >table tbody').append(htmlstr);
                     $('.search-result >table tbody tr').on('click', function() {
                         console.log($(this).attr('data-id'));

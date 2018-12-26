@@ -22,6 +22,7 @@ $(() => {
             success: data => {
                 if(data.status_code === 0) {
                     location.href = 'index.html';
+                    sessionStorage.setItem('user', 1);
                 }
             }
         });
