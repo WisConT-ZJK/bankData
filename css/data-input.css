@@ -1,0 +1,20 @@
+.tips {
+    color:#555;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: rgba(171, 171, 171, .4);
+}
+.tips dt {
+    color : #222;
+    margin-bottom: 10px;
+}
+.tips dd h5 {
+    display: inline-block;
+}
+.tips dd >div:last-child {
+    text-align: center;
+}
+
+#fileInput {
+    display: none;
+}

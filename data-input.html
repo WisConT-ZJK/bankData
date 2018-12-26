@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>银行数据分析系统 -- 主页</title>
+    <script src="libs/js/jquery.min.js"></script>
+    <script src="libs/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="libs/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="libs/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="css/data-input.css">
+    <link rel="stylesheet" type="text/css" href="css/public.css">
+</head>
+<body>
+    <div class="container-fluid">
+        <header class="row">
+            <div class="logo col-md-4">
+                <h4><span>银行数据分析系统</span></h4>
+            </div>
+            <nav class="col-md-8">
+                <a href="index.html"><i class="fa fa-home"></i> 主页</a>
+                <a href="data-input.html" class="active"><i class="fa fa-database" style="font-size: 14px"></i> 数据导入</a>
+            </nav>
+        </header>
+        
+        <div class="row">
+            <dl class="col-md-12 tips">
+                <dt><i class="fa fa-warning" style="color:red"></i> 数据导入须知：</dt>
+                <dd>
+                    <div class="col-md-6">
+                        <div>请上传Excel格式文件，导入前需要选择对应的银行数据格式，若导入数据格式系统<br>暂不支持，可将数据调整成标准格式，再通过标准格式选项导入。</div>
+                        <div>
+                            <h5>点击下载：</h5>
+                            <a style="margin-right:15px;" href="">标准格式.xls</a>
+                            <a href="">标准格式数据导入说明.doc</a>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <input type="file" id="fileInput"/>
+                        <div>
+                            <button class="btn btn-success btn-lg trigger-file"><i class="fa fa-upload"></i> 本地文件上传</button>
+                            <p class="choose-file-name"></p>
+                        </div>
+                    </div>
+                </dd>
+            </dl>
+        </div>
+
+        <h4>选择银行类型</h4>
+        <form id="bankForm" class="row">
+            <div class="col-md-12 col-sm-12">
+                <label>
+                    <input name="bankname" type="radio" value="标准格式" checked> <span style="color:#337ab7">标准格式</span>
+                </label>
+            </div>
+            <div class="col-md-2 col-sm-2">
+                <label>
+                    <input name="bankname" type="radio" value="福田银行"> 福田银行
+                </label>
+            </div>
+            <div class="col-md-2 col-sm-2">
+                <label>
+                    <input name="bankname" type="radio" value="工商银行"> 工商银行
+                </label>
+            </div>
+            <div class="col-md-2 col-sm-2">
+                <label>
+                    <input name="bankname" type="radio" value="光大银行"> 光大银行
+                </label>
+            </div>
+            <div class="col-md-2 col-sm-2">
+                <label>
+                    <input name="bankname" type="radio" value="广发银行"> 广发银行
+                </label>
+            </div>
+            <div class="col-md-2 col-sm-2">
+                <label>
+                    <input name="bankname" type="radio" value="华夏银行"> 华夏银行
+                </label>
+            </div>
+            <div class="col-md-2 col-sm-2">
+                <label>
+                    <input name="bankname" type="radio" value="建设银行"> 建设银行
+                </label>
+            </div>
+            <div class="col-md-2 col-sm-2">
+                <label>
+                    <input name="bankname" type="radio" value="交通银行"> 交通银行
+                </label>
+            </div>
+            <div class="col-md-2 col-sm-2">
+                <label>
+                    <input name="bankname" type="radio" value="民生银行"> 民生银行
+                </label>
+            </div>
+            <div class="col-md-2 col-sm-2">
+                <label>
+                    <input name="bankname" type="radio" value="宁波银行"> 宁波银行
+                </label>
+            </div>
+            <div class="col-md-2 col-sm-2">
+                <label>
+                    <input name="bankname" type="radio" value="农业银行"> 农业银行
+                </label>
+            </div>
+            <div class="col-md-2 col-sm-2">
+                <label>
+                    <input name="bankname" type="radio" value="平安银行"> 平安银行
+                </label>
+            </div>
+            <div class="col-md-2 col-sm-2">
+                <label>
+                    <input name="bankname" type="radio" value="浦发银行"> 浦发银行
+                </label>
+            </div>
+            <div class="col-md-2 col-sm-2">
+                <label>
+                    <input name="bankname" type="radio" value="农村商业银行"> 农村商业银行
+                </label>
+            </div>
+            <div class="col-md-2 col-sm-2">
+                <label>
+                    <input name="bankname" type="radio" value="星展银行"> 星展银行
+                </label>
+            </div>
+            <div class="col-md-2 col-sm-2">
+                <label>
+                    <input name="bankname" type="radio" value="兴业银行"> 兴业银行
+                </label>
+            </div>
+            <div class="col-md-2 col-sm-2">
+                <label>
+                    <input name="bankname" type="radio" value="招商银行"> 招商银行
+                </label>
+            </div>
+            <div class="col-md-2 col-sm-2">
+                <label>
+                    <input name="bankname" type="radio" value="中国银行"> 中国银行
+                </label>
+            </div>
+            <div class="col-md-2 col-sm-2">
+                <label>
+                    <input name="bankname" type="radio" value="中信银行"> 中信银行
+                </label>
+            </div>
+
+            <div class="col-md-12" style="margin-top: 15px;">
+                <button type="submit" id="button" class="btn btn-primary">开始导入</button>
+            </div>
+        </form>
+    </div>
+    <script src="js/dataInput.js"></script>
+</body>
+</html>

@@ -1,4 +1,22 @@
 $(() => {
+    $('.trigger-file').on('click', function() {
+        $('#fileInput').trigger('click');
+    });
+    $('#fileInput').on('change', function() {
+        let file = $(this)[0].files[0];
+        $('.choose-file-name').html(file.name);
+
+        // 处理文件数据.
+        // todo.
+
+        // 点击导入按钮上传.
+        // todo.
+
+        // rest.
+        $(this).val('');
+    });
+
+
     $('#bankForm input').on('change', function() {
         var bankname = $('input[name=bankname]:checked', '#bankForm').val(); 
         //alert(bankname);
