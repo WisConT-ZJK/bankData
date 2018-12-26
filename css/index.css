@@ -1,0 +1,12 @@
+.search {
+    margin: 25px 0;
+    padding-left: 8px;
+}
+
+.search-result >table {
+    display: none;
+}
+
+.table-search tbody tr {
+    cursor: pointer;
+}

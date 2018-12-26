@@ -1,7 +1,11 @@
+.login {
+    transform: translateY(150px);
+}
+
 .login-form {
     width: 100%;
     padding: 25px;
     border-radius: 4px;
+    margin-top: 25px;
     border: 1px solid #ccc;
-    transform: translateY(150px);
 }

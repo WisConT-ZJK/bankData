@@ -1,0 +1,54 @@
+{
+    "status_code": 0,
+    "message": "获取搜索结果成功",
+    "data": [
+        {
+            "id": "1",
+            "nsrsbh": "440301002418101",
+            "companyName": "深圳市金谷园实业发展有限公司",
+            "bankAccountName": "深圳市金谷园",
+            "bankAccount": "5423400034",
+            "ofBank": "深圳市广发银行分行"
+        },
+        {
+            "id": "2",
+            "nsrsbh": "44033100DK0031X",
+            "companyName": "龙华自助代开33",
+            "bankAccountName": "龙华",
+            "bankAccount": "5423400035",
+            "ofBank": "深圳市浦发银行分行"
+        },
+        {
+            "id": "3",
+            "nsrsbh": "44033100DK00125",
+            "companyName": "深圳市燃气集团股份有限公司   ",
+            "bankAccountName": "深圳市燃气集团",
+            "bankAccount": "5423400036",
+            "ofBank": "中国银行"
+        },
+        {
+            "id": "4",
+            "nsrsbh": "440301192408392",
+            "companyName": "深圳市金谷园实业发展有限公司光明分公司",
+            "bankAccountName": "深圳市金谷园分",
+            "bankAccount": "5423400037",
+            "ofBank": "中国银行"
+        },
+        {
+            "id": "5",
+            "nsrsbh": "440301002418101",
+            "companyName": "深圳市瑞鑫达化玻仪器有限公司  ",
+            "bankAccountName": "深圳市瑞鑫达",
+            "bankAccount": "5423400038",
+            "ofBank": "工商银行"
+        },
+        {
+            "id": "6",
+            "nsrsbh": "400002531920001",
+            "companyName": "深圳聚冷冷藏科技有限公司    ",
+            "bankAccountName": "深圳聚冷冷藏",
+            "bankAccount": "5423400039",
+            "ofBank": "招商银行"
+        }
+    ]
+}
