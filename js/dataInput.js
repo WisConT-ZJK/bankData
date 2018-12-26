@@ -1,4 +1,9 @@
 $(() => {
+    if(!checkLoginStatus()) {
+        location.href = 'login.html';
+        return;
+    }
+    
     $('.trigger-file').on('click', function() {
         $('#fileInput').trigger('click');
     });
