@@ -1,0 +1,8 @@
+.choose-date {
+    margin: 25px 0;
+    padding-left: 8px;
+}
+.choose-date-tips {
+    color: red;
+    display: block;
+}

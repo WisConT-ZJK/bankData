@@ -1,4 +1,9 @@
 $(() => {
+    if(checkLoginStatus()) {
+        location.href = 'index.html';
+        return;
+    }
+
     $('.login-btn').on('click', function() {
         let name = $('.login-form input[type=text]').val(),
             pwd = $('.login-form input[type=password]').val();
