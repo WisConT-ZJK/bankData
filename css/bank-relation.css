@@ -6,3 +6,25 @@
     color: red;
     display: block;
 }
+
+.chart {
+    margin-top: 25px;
+}
+
+.node--internal circle {
+    fill: #fff;
+}
+
+.node text {
+    cursor: pointer;
+    font: 12px sans-serif;
+}
+
+.tree-link {
+    fill: none;
+    stroke-width: 1.5px;
+}
+.tree-link.active {
+    stroke: red;
+    stroke-width: 2px;
+}
