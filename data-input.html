@@ -9,6 +9,8 @@
     <link rel="stylesheet" type="text/css" href="libs/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="css/data-input.css">
     <link rel="stylesheet" type="text/css" href="css/public.css">
+    <!-- Bootstrap select -->
+    <link href="libs/css/bootstrap-select.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container-fluid">
@@ -30,8 +32,8 @@
                         <div>请上传Excel格式文件，导入前需要选择对应的银行数据格式，若导入数据格式系统<br>暂不支持，可将数据调整成标准格式，再通过标准格式选项导入。</div>
                         <div>
                             <h5>点击下载：</h5>
-                            <a style="margin-right:15px;" href="">标准格式.xls</a>
-                            <a href="">标准格式数据导入说明.doc</a>
+                            <a style="margin-right:15px;" href="download/标准格式.xls" download>标准格式.xls</a>
+                            <a href="download/标准格式数据导入说明.doc" download>标准格式数据导入说明.doc</a>
                         </div>
                     </div>
 
@@ -47,7 +49,39 @@
         </div>
 
         <h4>选择银行类型</h4>
-        <form id="bankForm" class="row">
+            <div class="row">
+                <!-- select -->
+                    <div class="row" id="select-box">
+                        <div class="col-md-3 col-sm-3 col-xs-3">
+                            <form>
+                                <div class="form-group">
+                                    <select id="lunch" class="select-product selectpicker" data-live-search="true" title="选择银行类型">
+                                    <option value='标准格式'>标准格式</option>
+                                    <option value='福田银行'>福田银行</option>
+                                    <option value='工商银行'>工商银行</option>
+                                    <option value='光大银行'>光大银行</option>
+                                    <option value='广发银行'>广发银行</option>
+                                    <option value='华夏银行'>华夏银行</option>
+                                    <option value='建设银行'>建设银行</option>
+                                    <option value='交通银行'>交通银行</option>
+                                    <option value='标准格式'>标准格式</option>
+                                    <option value='民生银行'>民生银行</option>
+                                    <option value='宁波银行'>宁波银行</option>
+                                    <option value='农业银行'>农业银行</option>
+                                    <option value='平安银行'>平安银行</option>
+                                    <option value='浦发银行'>浦发银行</option>
+                                    <option value='农村商业银行'>农村商业银行</option>
+                                    <option value='兴业银行'>兴业银行</option>
+                                    <option value='招商银行'>招商银行</option>
+                                    <option value='中国银行'>中国银行</option>
+                                    <option value='中信银行'>中信银行</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                <div class="clearfix"></div>
+            </div>
             <div class="col-md-12 col-sm-12">
                 <label>
                     <input name="bankname" type="radio" value="标准格式" checked> <span style="color:#337ab7">标准格式</span>
@@ -147,10 +181,11 @@
             <div class="col-md-12" style="margin-top: 15px;">
                 <button type="submit" id="button" class="btn btn-primary">开始导入</button>
             </div>
-        </form>
     </div>
 
     <script src="js/public.js"></script>
     <script src="js/dataInput.js"></script>
+    <!-- Bootstrap select -->
+    <script src="libs/js/bootstrap-select.min.js"></script>
 </body>
 </html>
