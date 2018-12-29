@@ -1,4 +1,7 @@
 $(() => {
+    // 设置高度。
+    $('.chart').css('height', $(window).height() - 224); // 减去的224为页面其他元素的高度和25px下边距.
+
     let startDate, endDate;
     $('#date1, #date2').datepicker({
         format: 'yyyy-mm-dd',
@@ -344,7 +347,7 @@ $(() => {
         url: '../js/mock/relations.json',
         success: data => {
             if(data.status_code === 0) {
-                console.log(data)
+                console.log(data);
                 drawTreeChart(data.data.in, data.data.out);
             }
         }
