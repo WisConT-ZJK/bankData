@@ -1,6 +1,11 @@
 $(() => {
-    // 设置高度。
+    // 设置高度.
     $('.chart').css('height', $(window).height() - 224); // 减去的224为页面其他元素的高度和25px下边距.
+    // 隐藏按钮.
+    $(window).on('click', function() {
+        $('.btn-operating').css({display: 'none'});
+        $('.btn-operating .hide-node, .btn-operating .show-suspicious').unbind('click');
+    });
 
     let startDate, endDate;
     $('#date1, #date2').datepicker({
@@ -57,7 +62,20 @@ $(() => {
     });
 
     let timer = null;
+    // 图表原始数据.
+    let originData = {
+        in: null,
+        out: null
+    };
+    // 图表操作数据.
+    let operatingData = {
+        in: null,
+        out: null
+    };
     function drawTreeChart(links, linksLeft) {
+        // 清空svg.
+        $('svg').empty();
+
         let width = $('.chart').width(),
             height = $('.chart').height();
 
@@ -72,15 +90,13 @@ $(() => {
 
         clearTimeout(timer);
         timer = setTimeout(() => {
-            this.isAllowRequest = true;
             let bbox = $('.g-box')[0].getBBox();
             let sWid = $('svg').width();
             let sHei = $('svg').height();
-
-            $('.g-box').attr('transform', 'translate(' + (Math.abs(bbox.x) + (sWid - bbox.width) / 2) + ',' + (Math.abs(bbox.y) + (sHei - bbox.height) / 2) + ')');
-            // 设置拖拽和缩放的原点位置.
-            canvas.call(zoom_handler.transform, d3.zoomIdentity.translate((Math.abs(bbox.x) + (sWid - bbox.width) / 2), (Math.abs(bbox.y) + (sHei - bbox.height) / 2)).scale(1));
-        }, 100);
+            
+            // 设置拖拽和缩放的原点位置. 初始化带动画.
+            canvas.transition().duration(100).call(zoom_handler.transform, d3.zoomIdentity.translate((Math.abs(bbox.x) + (sWid - bbox.width) / 2), 0).scale(1));
+        }, 0);
 
         let defs = svg.append('svg:defs')
         let arrow = defs.append('svg:marker')    // This section adds in the arrows
@@ -113,15 +129,15 @@ $(() => {
         let links_data_left = linksLeft;
 
         // 节点数量过多导致重叠 设置基础节点数200 超过则取阀值进行扩展.
-        let maxCnt = Math.max(links_data.length, links_data_left.length);
-        let basicCnt = 110, threshold = 0;
-        if(maxCnt > basicCnt) {
-            threshold = (basicCnt - maxCnt) * (maxCnt / basicCnt) * 5;
-        }else {
-            threshold = (basicCnt - maxCnt) * 12;
-        }
-
-        let tree = d3.tree().size([height - threshold, width / 2 - 160]);
+        // let maxCnt = Math.max(links_data.length, links_data_left.length);
+        // let basicCnt = 200, threshold = 0;
+        // if(maxCnt > basicCnt) {
+        //     threshold = (basicCnt - maxCnt) * (maxCnt / basicCnt) * 5;
+        // }else {
+        //     threshold = (basicCnt - maxCnt) * 12;
+        // }
+        
+        let tree = d3.tree().size([height, width / 2 - 160]);
 
         let root = stratify(links_data)
             .sort(function(a, b) { return (a.height - b.height) || a.id.localeCompare(b.id); });
@@ -194,20 +210,34 @@ $(() => {
                 })
                 .attr('stroke', '#337ab7');
 
-            // let textpath = link.append('text')
-            //     .attr('fill', function(d) {
-            //         if(d.data.activity === 'buy') {
-            //             return '#d9534f';
-            //         }
-            //         return '#5cb85c';
-            //     })
-            //     .append('textPath')
-            //     .attr('href', function(d) { 
-            //         return '#' + d.data.name;
-            //     })
-            //     .attr('startOffset', '30%')
-            //     .style('text-anchor', 'middle')
-            //     .text(function(d) { return d.data.value.toFixed(2); });
+            // define background color for link labels
+            let txtBgnd = defs.append('filter')
+                .attr('id', 'solid')
+                .attr('x', 0)
+                .attr('y', 0)
+                .attr('width', 1)
+                .attr('height', 1)
+                .style('opacity', 0.5);
+            txtBgnd.append('feFlood')
+                .attr('flood-color', 'rgb(255, 255, 255)');
+            txtBgnd.append('feComposite')
+                .attr('in', 'SourceGraphic');
+            let textpath = link.append('text')
+                .attr('dy', 5)
+                .attr('filter', 'url(#solid)')
+                .attr('fill', function(d) {
+                    if(d.data.activity === 'buy') {
+                        return '#d9534f';
+                    }
+                    return '#5cb85c';
+                })
+                .append('textPath')
+                .attr('href', function(d) { 
+                    return '#' + d.data.name;
+                })
+                .attr('startOffset', '30%')
+                .style('text-anchor', 'middle')
+                .text(function(d) { return d.data.value.toFixed(2); });
 
             let node = svg.selectAll('.node')
                 .data(root.descendants())
@@ -242,6 +272,53 @@ $(() => {
                     if(d.data.lv === 0) {
                         return '#000';
                     }
+                })
+                .on('click', function(e) {
+                    let nodeId = d3.event.target.dataset.id,
+                        nodeLv = d3.event.target.dataset.lv;
+
+                    let x = d3.event.screenX, y = d3.event.screenY;
+                    y += $(window).scrollTop() - 100;
+                    $('.btn-operating').css({left: x, top: y, display: 'block'});
+
+                    // 隐藏节点.
+                    let dataType = d3.event.target.dataset.type;
+                    $('.btn-operating .hide-node').on('click', function() {
+                        if(dataType === 'sell') {
+                            operatingData.out.forEach(function(od, i) {
+                                if(od.id === nodeId) {
+                                    operatingData.out.splice(i, 1);
+                                }
+                            });
+                        }
+
+                        if(dataType === 'buy') {
+                            operatingData.in.forEach(function(od, i) {
+                                if(od.id === nodeId) {
+                                    operatingData.in.splice(i, 1);
+                                }
+                            });
+                        }
+
+                        drawTreeChart(operatingData.in, operatingData.out);
+                    });
+
+                    // 显示可疑资金.
+                    $('.btn-operating .show-suspicious').on('click', function() {
+                        $.ajax({
+                            type: 'GET',
+                            data: {id: nodeId, lv: nodeLv},
+                            url: '../js/mock/suspicious.json',
+                            success: data => {
+                                if(data.status_code === 0) {
+                                    operatingData.in.push(data.data);
+                                    drawTreeChart(operatingData.in, operatingData.out);
+                                }
+                            }
+                        });
+                    });
+
+                    d3.event.stopPropagation();
                 });
 
             // 处理文本的x距离.
@@ -257,6 +334,15 @@ $(() => {
                 }
             };
             nametext.append('tspan')
+                .attr('data-id', function(d) {
+                    return d.data.id;
+                })
+                .attr('data-type', function(d) {
+                    return d.data.activity;
+                })
+                .attr('data-lv', function(d) {
+                    return d.data.lv;
+                })
                 .attr('x', processTextOfX)
                 .attr('y', function(d) {
                     if(d.data.lv === 0) {
@@ -268,6 +354,15 @@ $(() => {
                 .text(function(d) { return d.data.name; });
 
             nametext.append('tspan')
+                .attr('data-id', function(d) {
+                    return d.data.id;
+                })
+                .attr('data-type', function(d) {
+                    return d.data.activity;
+                })
+                .attr('data-lv', function(d) {
+                    return d.data.lv;
+                })
                 .attr('x', processTextOfX)
                 .attr('y', function(d) {
                     if(d.data.lv === 0) {
@@ -279,6 +374,15 @@ $(() => {
                 .text(function(d) { return d.data.account_number; });
 
             nametext.append('tspan')
+                .attr('data-id', function(d) {
+                    return d.data.id;
+                })
+                .attr('data-type', function(d) {
+                    return d.data.activity;
+                })
+                .attr('data-lv', function(d) {
+                    return d.data.lv;
+                })
                 .attr('x', processTextOfX)
                 .attr('y', function(d) {
                     if(d.data.lv === 0) {
@@ -290,37 +394,37 @@ $(() => {
                 .text(function(d) { return d.data.related_bank; });
 
             // define background color for link labels
-            let txtBgnd = defs.append('filter')
-                .attr('id', 'solid')
-                .attr('x', 0)
-                .attr('y', 0)
-                .attr('width', 1)
-                .attr('height', 1)
-                .style('opacity', 0.5);
-            txtBgnd.append('feFlood')
-                .attr('flood-color', 'rgb(255, 255, 255)');
-            txtBgnd.append('feComposite')
-                .attr('in', 'SourceGraphic');
-            node.append('text')
-                .attr('filter', 'url(#solid)')
-                .style('display', function(d) {
-                    if(d.data.lv === 0) {
-                        return 'none';
-                    }
-                })
-                .style('stroke', function(d) {
-                    return '#999';
-                })
-                .attr('x', function(d) {
-                    if(d.data.activity === 'buy') {
-                        return -140;
-                    }
-                    return 100;
-                })
-                .attr('dy', function(d) {
-                    return 0;
-                })
-                .text(function(d) { return d.data.value.toFixed(2);});
+            // let txtBgnd = defs.append('filter')
+            //     .attr('id', 'solid')
+            //     .attr('x', 0)
+            //     .attr('y', 0)
+            //     .attr('width', 1)
+            //     .attr('height', 1)
+            //     .style('opacity', 0.5);
+            // txtBgnd.append('feFlood')
+            //     .attr('flood-color', 'rgb(255, 255, 255)');
+            // txtBgnd.append('feComposite')
+            //     .attr('in', 'SourceGraphic');
+            // node.append('text')
+            //     .attr('filter', 'url(#solid)')
+            //     .style('display', function(d) {
+            //         if(d.data.lv === 0) {
+            //             return 'none';
+            //         }
+            //     })
+            //     .style('stroke', function(d) {
+            //         return '#999';
+            //     })
+            //     .attr('x', function(d) {
+            //         if(d.data.activity === 'buy') {
+            //             return -140;
+            //         }
+            //         return 100;
+            //     })
+            //     .attr('dy', function(d) {
+            //         return 0;
+            //     })
+            //     .text(function(d) { return d.data.value.toFixed(2);});
 
             function diagonal(d) {
                 if (d.data.activity == 'buy') {
@@ -347,8 +451,21 @@ $(() => {
         url: '../js/mock/relations.json',
         success: data => {
             if(data.status_code === 0) {
-                console.log(data);
-                drawTreeChart(data.data.in, data.data.out);
+                // 先保存原始数据.
+                originData.in = deepClone(data.data.in);
+                originData.out = deepClone(data.data.out);
+                operatingData.in = deepClone(data.data.in);
+                operatingData.out = deepClone(data.data.out);
+                console.log(originData);
+
+                // 显示全部隐藏企业.
+                $('.show-all-hide-node').on('click', function() {
+                    operatingData.in = deepClone(originData.in);
+                    operatingData.out = deepClone(originData.out);
+                    drawTreeChart(operatingData.in, operatingData.out);
+                });
+
+                drawTreeChart(operatingData.in, operatingData.out);
             }
         }
     });

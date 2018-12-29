@@ -1,0 +1,19 @@
+{
+    "status_code": 0,
+    "message": "获取可疑资金成功",
+    "data": {
+            "pid": "440301192309343#buy",
+            "id": "91441900MA4UKCKT8S#buy",
+            "value": 12118.0,
+            "activity": "buy",
+            "type": "",
+            "lv": 2,
+            "account_name": "对方感到孤独",
+            "account_number": "434535",
+            "related_bank": "招商银行",
+            "NSRSBH": "91441900MA4UKCKT8L",
+            "DJXH": "unknown",
+            "name": "我是可疑资金"
+    },
+    "api_type": "rest"
+}
