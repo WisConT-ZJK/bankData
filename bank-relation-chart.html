@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>企业银行资金关系网</title>
+    <script src="libs/js/jquery.min.js"></script>
+    <script src="libs/js/bootstrap.min.js"></script>
+    <script src="libs/js/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="libs/js/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+    <script src="libs/js/d3-v4.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="libs/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="libs/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="libs/js/bootstrap-datepicker/css/bootstrap-datepicker3.min.css">
+    <link rel="stylesheet" type="text/css" href="css/bank-relation.css">
+    <link rel="stylesheet" type="text/css" href="css/public.css">
+</head>
+<body>
+    <div class="container-fluid">
+        <header class="row">
+            <div class="logo col-md-4">
+                <h4><span>银行数据分析系统</span></h4>
+            </div>
+            <nav class="col-md-8">
+                <a href="index.html"><i class="fa fa-home"></i> 主页</a>
+                <a href="data-input.html"><i class="fa fa-database" style="font-size: 14px"></i> 数据导入</a>
+            </nav>
+        </header>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-inline choose-date">
+                    <div class="form-group">
+                        <label>选择时间期限</label>
+                        <input type="text" class="form-control" id="date1" style="width: 220px;background-color: #fff" data-flag="start" placeholder="请选择开始时间" readonly>
+                        -
+                        <input type="text" class="form-control" id="date2" style="width: 220px;background-color: #fff" data-flag="end" placeholder="请选择结束时间" readonly>
+                        <span class="choose-date-tips"></span>
+                    </div>
+                </div>
+                
+                <div class="btns">
+                    <button class="btn btn-primary show-all-hide-node">显示全部隐藏企业</button>
+                    <button class="btn btn-primary">导出图片</button>
+                </div>
+
+                <div class="chart">
+                    <svg></svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+     <!-- 提示 -->
+    <div class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" id="myModalLabel">提示</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="modal-msg">Modal body text goes here.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">确定</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 操作按钮 -->
+    <div class="btn-operating btn-group-vertical" style="position: absolute;display: none;">
+        <button type="button" class="btn btn-warning btn-sm hide-node" style="text-align: left;"><i class="fa fa-eye"></i> 隐藏</button>
+        <button type="button" class="btn btn-primary btn-sm show-suspicious"><i class="fa fa-file-text-o"></i> 显示可疑资金流向</button>
+    </div>
+    
+    <script src="js/public.js"></script>
+    <script src="js/bank-relation.js"></script>
+</body>
+</html>
