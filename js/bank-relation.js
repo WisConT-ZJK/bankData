@@ -206,12 +206,12 @@ $(() => {
                     return d.data.id
                 })
                 .attr('d', diagonal)
-                .attr('marker-start', d => {
+                .attr('marker-end', d => {
                     if (d.data.activity == 'sell') {
                         return `url(#${d.data.activity})`
                     }
                 })
-                .attr('marker-end', d => {
+                .attr('marker-start', d => {
                     if(d.data.activity == 'buy') {
                         return `url(#${d.data.activity})`
                     }
@@ -231,9 +231,21 @@ $(() => {
                 .attr('href', function(d) { 
                     return '#' + d.data.id;
                 })
-                .attr('startOffset', '30%')
+                .attr('startOffset', function(d) {
+                    if(d.data.lv <= 1) {
+                        return '30%';
+                    }
+                    if(d.data.lv > 1) {
+                        return '50%';
+                    }
+                })
                 .style('text-anchor', 'middle')
-                .text(function(d) { return d.data.value.toFixed(2); });
+                .text(function(d) { 
+                    if(d.data.lv > 1) {
+                        return `2018/01/01 交易总额：${d.data.value.toFixed(2)}`;
+                    }
+                    return d.data.value.toFixed(2);
+                });
 
             let node = svg.selectAll('.node');
             let nupd = node.data(data, function(d) {
@@ -316,7 +328,7 @@ $(() => {
                                             operatingData.in.push(data.data);
                                             drawTreeChart(operatingData.in, operatingData.out);
                                         }else {
-                                            $('.modal-msg').html('可疑资金已显示！');
+                                            $('.modal-msg').html('可疑资金流向已显示！');
                                             $('.modal').modal('show');
                                         }
                                     }
@@ -412,27 +424,37 @@ $(() => {
             //     })
             //     .attr('x', function(d) {
             //         if(d.data.activity === 'buy') {
-            //             return -140;
+            //             if(d.data.lv === 1) {
+            //                 return -70;
+            //             }
+            //             if(d.data.lv > 1) {
+            //                 return -180;
+            //             }
             //         }
-            //         return 100;
-            //     })
-            //     .attr('dy', function(d) {
             //         return 0;
             //     })
-            //     .text(function(d) { return d.data.value.toFixed(2);});
+            //     .attr('dy', function(d) {
+            //         return 4;
+            //     })
+            //     .text(function(d) { 
+            //         if(d.data.lv > 1) {
+            //             return `2018/01/01 交易总额：${d.data.value.toFixed(2)}`;
+            //         }
+            //         return d.data.value.toFixed(2);
+            //     });
 
             function diagonal(d) {
                 if (d.data.activity == 'buy') {
                     return `M ${d.y} , ${d.x}
                         C ${d.parent.y + 100} , ${d.x}
                         ${d.parent.y + 100} , ${d.parent.x}
-                        ${d.parent.y} , ${d.parent.x}
+                        ${d.parent.y + 20} , ${d.parent.x}
                         T ${d.parent.y} , ${d.parent.x}`;
                 }else {
                     return `M ${d.y} , ${d.x}
                         C ${d.parent.y - 100} , ${d.x}
                         ${d.parent.y - 100} , ${d.parent.x}
-                        ${d.parent.y} , ${d.parent.x}
+                        ${d.parent.y - 20} , ${d.parent.x}
                         T ${d.parent.y} , ${d.parent.x}`;
                 }
             }
