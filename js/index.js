@@ -38,8 +38,9 @@ $(() => {
                     $('.search-result >table tbody').empty();
                     $('.search-result >table tbody').append(htmlstr);
                     $('.search-result >table tbody tr').on('click', function() {
-                        console.log($(this).attr('data-id'));
+                        //console.log($(this).attr('data-id'));
                         // todo 跳转到数据详情页
+                        window.location.href = '../data-find.html'
                     });
                 }
             }
