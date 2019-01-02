@@ -445,6 +445,11 @@ $(() => {
 
             function diagonal(d) {
                 if (d.data.activity == 'buy') {
+                    // return `M ${d.y} , ${d.x}
+                    //     C ${d.parent.y + 100} , ${d.x}
+                    //     ${d.parent.y + 100} , ${d.parent.x}
+                    //     ${d.parent.y + 20} , ${d.parent.x}
+                    //     T ${d.parent.y} , ${d.parent.x}`;
                     return `M ${d.y} , ${d.x}
                         C ${d.parent.y + 100} , ${d.x}
                         ${d.parent.y + 100} , ${d.parent.x}
