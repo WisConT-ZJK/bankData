@@ -86,7 +86,8 @@ $(() => {
             .call(zoom_handler);
             
         let svg = canvas.append('g')
-            .attr('class', 'g-box');
+            .attr('class', 'g-box')
+            .style('opacity', 0);
 
         clearTimeout(timer);
         timer = setTimeout(() => {
@@ -94,14 +95,15 @@ $(() => {
             let sWid = $('svg').width();
             let sHei = $('svg').height();
             
-            // 设置拖拽和缩放的原点位置. 初始化带动画.
-            canvas.transition().duration(100).call(zoom_handler.transform, d3.zoomIdentity.translate((Math.abs(bbox.x) + (sWid - bbox.width) / 2), 0).scale(1));
+            // 设置拖拽和缩放的原点位置.
+            $('.g-box').css('opacity', 1);
+            canvas.transition().call(zoom_handler.transform, d3.zoomIdentity.translate((Math.abs(bbox.x) + (sWid - bbox.width) / 2), 0).scale(1));
         }, 0);
 
         let defs = svg.append('svg:defs')
         let arrow = defs.append('svg:marker')    // This section adds in the arrows
             .attr('id', 'sell')
-            .attr('refX', 9)
+            .attr('refX', 0)
             .attr('refY', 2)
             .attr('markerWidth', 10)
             .attr('markerHeight', 10)
@@ -120,22 +122,24 @@ $(() => {
             .append('svg:path')
             .attr('d', 'M0,0 L0,4 L9,2 z')
             .attr('fill', '#999');
-
+        // define background color for link labels
+        let txtBgnd = defs.append('filter')
+            .attr('id', 'solid')
+            .attr('x', 0)
+            .attr('y', 0)
+            .attr('width', 1)
+            .attr('height', 1)
+            .style('opacity', 0.5);
+        txtBgnd.append('feFlood')
+            .attr('flood-color', 'rgb(255, 255, 255)');
+        txtBgnd.append('feComposite')
+            .attr('in', 'SourceGraphic');
 
         let stratify = d3.stratify()
             .parentId(function(d) { return d.pid; });
 
         let links_data = links;
         let links_data_left = linksLeft;
-
-        // 节点数量过多导致重叠 设置基础节点数200 超过则取阀值进行扩展.
-        // let maxCnt = Math.max(links_data.length, links_data_left.length);
-        // let basicCnt = 200, threshold = 0;
-        // if(maxCnt > basicCnt) {
-        //     threshold = (basicCnt - maxCnt) * (maxCnt / basicCnt) * 5;
-        // }else {
-        //     threshold = (basicCnt - maxCnt) * 12;
-        // }
         
         let tree = d3.tree().size([height, width / 2 - 160]);
 
@@ -153,10 +157,10 @@ $(() => {
         
         if(root.children) {
             root.children = root.children.concat(root_left.children);
-            drawTree(root, 'left');
+            drawTree(root);
         }else {
             root.children = [];
-            drawTree(root_left, 'left');
+            drawTree(root_left);
         }
 
         //Zoom functions 
@@ -184,45 +188,37 @@ $(() => {
             return outputLinks;
         }
 
-        function drawTree(root, ori) {
+        function drawTree(root) {
+            let data = root.descendants();
             let link = svg.append('g')
                 .selectAll('.tree-link')
-                .data(root.descendants().slice(1))
-                .enter().append('g');
+                .data(data.slice(1), function(d) {
+                    return d.data.id;
+                });
+            link.exit().remove();
+            let lent = link.enter().append('g');
 
-            let path = link.append('path')
+            let path = lent.append('path')
                 .attr('class', d => {
                     return `tree-link ${d.parent.data.id.replace(/#/g, '-')}`;
                 })
                 .attr('id', d => {
-                    return d.data.name
+                    return d.data.id
                 })
                 .attr('d', diagonal)
-                .attr('marker-end', d => {
+                .attr('marker-start', d => {
                     if (d.data.activity == 'sell') {
                         return `url(#${d.data.activity})`
                     }
                 })
-                .attr('marker-start', d => {
+                .attr('marker-end', d => {
                     if(d.data.activity == 'buy') {
                         return `url(#${d.data.activity})`
                     }
                 })
                 .attr('stroke', '#337ab7');
 
-            // define background color for link labels
-            let txtBgnd = defs.append('filter')
-                .attr('id', 'solid')
-                .attr('x', 0)
-                .attr('y', 0)
-                .attr('width', 1)
-                .attr('height', 1)
-                .style('opacity', 0.5);
-            txtBgnd.append('feFlood')
-                .attr('flood-color', 'rgb(255, 255, 255)');
-            txtBgnd.append('feComposite')
-                .attr('in', 'SourceGraphic');
-            let textpath = link.append('text')
+            let textpath = lent.append('text')
                 .attr('dy', 5)
                 .attr('filter', 'url(#solid)')
                 .attr('fill', function(d) {
@@ -233,19 +229,22 @@ $(() => {
                 })
                 .append('textPath')
                 .attr('href', function(d) { 
-                    return '#' + d.data.name;
+                    return '#' + d.data.id;
                 })
                 .attr('startOffset', '30%')
                 .style('text-anchor', 'middle')
                 .text(function(d) { return d.data.value.toFixed(2); });
 
-            let node = svg.selectAll('.node')
-                .data(root.descendants())
-                .enter().append('g')
+            let node = svg.selectAll('.node');
+            let nupd = node.data(data, function(d) {
+                    return d.data.id;
+                });
+            let nent = nupd.enter().append('g')
                 .attr('class', function(d) { return 'node' + (d.children ? ' node--internal' : ' node--leaf'); })
                 .attr('transform', function(d) { return 'translate(' + d.y + ',' + d.x + ')'; });
+            nupd.exit().remove();
 
-            let nametext = node.append('text')
+            let nametext = nent.append('text')
                 .style('text-anchor', function(d) {
                     if(d.data.lv === 0) {
                         return 'start';
@@ -273,50 +272,58 @@ $(() => {
                         return '#000';
                     }
                 })
-                .on('click', function(e) {
-                    let nodeId = d3.event.target.dataset.id,
-                        nodeLv = d3.event.target.dataset.lv;
+                .on('click', function(d) {
+                    if(d.data.lv > 0) {
+                        let nodeId = d3.event.target.dataset.id,
+                            nodeLv = d3.event.target.dataset.lv;
 
-                    let x = d3.event.screenX, y = d3.event.screenY;
-                    y += $(window).scrollTop() - 100;
-                    $('.btn-operating').css({left: x, top: y, display: 'block'});
+                        let x = d3.event.screenX, y = d3.event.screenY;
+                        y += $(window).scrollTop() - 100;
+                        $('.btn-operating').css({left: x, top: y, display: 'block'});
 
-                    // 隐藏节点.
-                    let dataType = d3.event.target.dataset.type;
-                    $('.btn-operating .hide-node').on('click', function() {
-                        if(dataType === 'sell') {
-                            operatingData.out.forEach(function(od, i) {
-                                if(od.id === nodeId) {
-                                    operatingData.out.splice(i, 1);
-                                }
-                            });
-                        }
-
-                        if(dataType === 'buy') {
-                            operatingData.in.forEach(function(od, i) {
-                                if(od.id === nodeId) {
-                                    operatingData.in.splice(i, 1);
-                                }
-                            });
-                        }
-
-                        drawTreeChart(operatingData.in, operatingData.out);
-                    });
-
-                    // 显示可疑资金.
-                    $('.btn-operating .show-suspicious').on('click', function() {
-                        $.ajax({
-                            type: 'GET',
-                            data: {id: nodeId, lv: nodeLv},
-                            url: '../js/mock/suspicious.json',
-                            success: data => {
-                                if(data.status_code === 0) {
-                                    operatingData.in.push(data.data);
-                                    drawTreeChart(operatingData.in, operatingData.out);
-                                }
+                        // 隐藏节点.
+                        let dataType = d3.event.target.dataset.type;
+                        $('.btn-operating .hide-node').on('click', function() {
+                            if(dataType === 'sell') {
+                                operatingData.out.forEach(function(od, i) {
+                                    if(od.id === nodeId) {
+                                        operatingData.out.splice(i, 1);
+                                    }
+                                });
                             }
+
+                            if(dataType === 'buy') {
+                                operatingData.in.forEach(function(od, i) {
+                                    // 删除当前节点及其子节点.
+                                    if(od.id === nodeId || od.pid === nodeId) {
+                                        operatingData.in.splice(i, 1);
+                                    }
+                                });
+                            }
+
+                            drawTreeChart(operatingData.in, operatingData.out);
                         });
-                    });
+
+                        // 显示可疑资金.
+                        $('.btn-operating .show-suspicious').on('click', function() {
+                            $.ajax({
+                                type: 'GET',
+                                data: {id: nodeId, lv: nodeLv},
+                                url: '../js/mock/suspicious.json',
+                                success: data => {
+                                    if(data.status_code === 0) {
+                                        if(JSON.stringify(operatingData.in).indexOf(data.data.id) <= -1) {
+                                            operatingData.in.push(data.data);
+                                            drawTreeChart(operatingData.in, operatingData.out);
+                                        }else {
+                                            $('.modal-msg').html('可疑资金已显示！');
+                                            $('.modal').modal('show');
+                                        }
+                                    }
+                                }
+                            });
+                        });
+                    }
 
                     d3.event.stopPropagation();
                 });
@@ -393,19 +400,7 @@ $(() => {
                 })
                 .text(function(d) { return d.data.related_bank; });
 
-            // define background color for link labels
-            // let txtBgnd = defs.append('filter')
-            //     .attr('id', 'solid')
-            //     .attr('x', 0)
-            //     .attr('y', 0)
-            //     .attr('width', 1)
-            //     .attr('height', 1)
-            //     .style('opacity', 0.5);
-            // txtBgnd.append('feFlood')
-            //     .attr('flood-color', 'rgb(255, 255, 255)');
-            // txtBgnd.append('feComposite')
-            //     .attr('in', 'SourceGraphic');
-            // node.append('text')
+            // nent.append('text')
             //     .attr('filter', 'url(#solid)')
             //     .style('display', function(d) {
             //         if(d.data.lv === 0) {
@@ -428,17 +423,17 @@ $(() => {
 
             function diagonal(d) {
                 if (d.data.activity == 'buy') {
-                    return 'M' + d.y + ',' + d.x
-                        + 'C' + (d.parent.y + 100) + ',' + d.x
-                        + ' ' + (d.parent.y + 100) + ',' + d.parent.x
-                        + ' ' + d.parent.y + ',' + d.parent.x
-                        + 'T' + d.parent.y + ',' + d.parent.x;
+                    return `M ${d.y} , ${d.x}
+                        C ${d.parent.y + 100} , ${d.x}
+                        ${d.parent.y + 100} , ${d.parent.x}
+                        ${d.parent.y} , ${d.parent.x}
+                        T ${d.parent.y} , ${d.parent.x}`;
                 }else {
-                    return 'M' + d.y + ',' + d.x
-                        + 'C' + (d.parent.y - 100) + ',' + d.x
-                        + ' ' + (d.parent.y - 100) + ',' + d.parent.x
-                        + ' ' + (d.parent.y - 20) + ',' + d.parent.x
-                        + 'T' + d.parent.y + ',' + d.parent.x;
+                    return `M ${d.y} , ${d.x}
+                        C ${d.parent.y - 100} , ${d.x}
+                        ${d.parent.y - 100} , ${d.parent.x}
+                        ${d.parent.y} , ${d.parent.x}
+                        T ${d.parent.y} , ${d.parent.x}`;
                 }
             }
         }
