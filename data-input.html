@@ -32,8 +32,8 @@
                         <div>请上传Excel格式文件，导入前需要选择对应的银行数据格式，若导入数据格式系统<br>暂不支持，可将数据调整成标准格式，再通过标准格式选项导入。</div>
                         <div>
                             <h5>点击下载：</h5>
-                            <a style="margin-right:15px;" href="download/标准格式.xls" download>标准格式.xls</a>
-                            <a href="download/标准格式数据导入说明.doc" download>标准格式数据导入说明.doc</a>
+                            <a style="margin-right:15px;" href="download/标准格式.xlsx" download>标准格式.xlsx</a>
+                            <a href="download/标准格式数据导入说明.docx" download>标准格式数据导入说明.docx</a>
                         </div>
                     </div>
 
@@ -61,7 +61,7 @@
                                 <div class="form-group">
                                     <select id="lunch" class="select-product selectpicker" data-live-search="true" title="选择银行类型">
                                     <option value='标准格式'>标准格式</option>
-                                    <option value='福田银行'>福田银行</option>
+                                    <option value='福田银座'>福田银座</option>
                                     <option value='工商银行'>工商银行</option>
                                     <option value='光大银行'>光大银行</option>
                                     <option value='广发银行'>广发银行</option>
@@ -89,8 +89,8 @@
                 <button type="submit" id="button" class="btn btn-primary">开始导入</button>
             </div>
     </div>
-    <!-- 导入结果提示 -->
-    <div class="modal fade" id="resultOutput" tabindex="-1" role="dialog">
+    <!-- 导入结果提示失败 -->
+    <div class="modal fade" id="resultOutput1" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -100,6 +100,23 @@
                     <table class="table table-hover table-notek table-search" data-dismiss="modal">
                         <tbody></tbody>
                     </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary trigger-file" data-dismiss="modal">继续导入</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">完成导入</button>
+                </div>
+            </div>
+        </div>
+    </div>
+        <!-- 导入结果提示无具体失败信息 -->
+    <div class="modal fade" id="resultOutput2" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <p class="modal-msg1">Modal body text goes here.</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary trigger-file" data-dismiss="modal">继续导入</button>
