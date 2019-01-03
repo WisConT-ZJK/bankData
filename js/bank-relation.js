@@ -320,9 +320,16 @@ $(() => {
                         let nodeId = d3.event.target.dataset.id,
                             nodeLv = d3.event.target.dataset.lv;
 
-                        let x = d3.event.screenX, y = d3.event.screenY;
-                        y += $(window).scrollTop() - 100;
-                        $('.btn-operating').css({left: x, top: y, display: 'block'});
+                        console.log(d3.mouse(d3.event.target), d3.event);
+
+                        let x = d3.event.pageX, 
+                            y = d3.event.pageY,
+                            bodyWidth = $(document.body).width();
+                        if(x + $('.btn-operating').width() <= bodyWidth) {
+                            $('.btn-operating').css({left: x, top: y, display: 'block'});
+                        }else {
+                            $('.btn-operating').css({left: x - $('.btn-operating').width(), top: y, display: 'block'});
+                        }
 
                         // 隐藏节点.
                         let dataType = d3.event.target.dataset.type;
@@ -442,37 +449,6 @@ $(() => {
                     return 19;
                 })
                 .text(function(d) { return d.data.related_bank; });
-
-            // nent.append('text')
-            //     .attr('filter', 'url(#solid)')
-            //     .style('display', function(d) {
-            //         if(d.data.lv === 0) {
-            //             return 'none';
-            //         }
-            //     })
-            //     .style('stroke', function(d) {
-            //         return '#999';
-            //     })
-            //     .attr('x', function(d) {
-            //         if(d.data.activity === 'buy') {
-            //             if(d.data.lv === 1) {
-            //                 return -70;
-            //             }
-            //             if(d.data.lv > 1) {
-            //                 return -180;
-            //             }
-            //         }
-            //         return 0;
-            //     })
-            //     .attr('dy', function(d) {
-            //         return 4;
-            //     })
-            //     .text(function(d) { 
-            //         if(d.data.lv > 1) {
-            //             return `2018/01/01 交易总额：${d.data.value.toFixed(2)}`;
-            //         }
-            //         return d.data.value.toFixed(2);
-            //     });
 
             function diagonal(d) {
                 if (d.data.activity == 'buy') {
