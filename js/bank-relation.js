@@ -6,6 +6,10 @@ $(() => {
         $('.btn-operating').css({display: 'none'});
         $('.btn-operating .hide-node, .btn-operating .show-suspicious').unbind('click');
     });
+    // 关闭前30按钮.
+    $('.top-30-amount .top-30-close').on('click', function() {
+        $('.top-30-amount').hide();
+    });
 
     let startDate, endDate;
     $('#date1, #date2').datepicker({
@@ -206,12 +210,12 @@ $(() => {
                     return d.data.id
                 })
                 .attr('d', diagonal)
-                .attr('marker-end', d => {
+                .attr('marker-start', d => {
                     if (d.data.activity == 'sell') {
                         return `url(#${d.data.activity})`
                     }
                 })
-                .attr('marker-start', d => {
+                .attr('marker-end', d => {
                     if(d.data.activity == 'buy') {
                         return `url(#${d.data.activity})`
                     }
@@ -221,22 +225,44 @@ $(() => {
             let textpath = lent.append('text')
                 .attr('dy', 5)
                 .attr('filter', 'url(#solid)')
-                .attr('fill', function(d) {
-                    if(d.data.activity === 'buy') {
-                        return '#d9534f';
-                    }
-                    return '#5cb85c';
+                .attr('fill', '#d9534f')
+                .attr('class', 'line-amount')
+                .on('click', function(d) {
+                    $.ajax({
+                        type: 'GET',
+                        data: {
+                            id: d.data.id,
+                            pid: d.data.pid
+                        },
+                        url: '../js/mock/top30.json',
+                        success: data => {
+                            if(data.status_code === 0) {
+                                let hstr = ``;
+                                data.data.forEach(function(d) {
+                                    hstr += `
+                                        <li>${d.date}：${d.amount}.00</li>
+                                    `;
+                                });
+                                $('.top-30-amount').show();
+                                $('.top-30-amount ul').empty();
+                                $('.top-30-amount ul').append(hstr);
+                            }
+                        }
+                    });
                 })
                 .append('textPath')
                 .attr('href', function(d) { 
                     return '#' + d.data.id;
                 })
                 .attr('startOffset', function(d) {
-                    if(d.data.lv <= 1) {
+                    if(d.data.activity === 'sell') {
                         return '30%';
                     }
-                    if(d.data.lv > 1) {
-                        return '50%';
+                    if(d.data.activity === 'buy') {
+                        if(d.data.lv > 1) {
+                            return '50%';
+                        }
+                        return '70%';
                     }
                 })
                 .style('text-anchor', 'middle')
@@ -257,6 +283,11 @@ $(() => {
             nupd.exit().remove();
 
             let nametext = nent.append('text')
+                .attr('filter', function(d) {
+                    if(d.data.lv === 0) {
+                        return 'url(#solid)';
+                    }
+                })
                 .style('text-anchor', function(d) {
                     if(d.data.lv === 0) {
                         return 'start';
@@ -343,7 +374,7 @@ $(() => {
             // 处理文本的x距离.
             function processTextOfX(d) {
                 if(d.data.lv === 0) {
-                    return -40;
+                    return -d.data.name.length * 7;
                 }
 
                 if(d.data.activity === 'buy') {
@@ -365,7 +396,7 @@ $(() => {
                 .attr('x', processTextOfX)
                 .attr('y', function(d) {
                     if(d.data.lv === 0) {
-                        return 15;
+                        return -5;
                     }
 
                     return -10;
@@ -385,7 +416,7 @@ $(() => {
                 .attr('x', processTextOfX)
                 .attr('y', function(d) {
                     if(d.data.lv === 0) {
-                        return 32;
+                        return 12;
                     }
 
                     return 5;
@@ -405,7 +436,7 @@ $(() => {
                 .attr('x', processTextOfX)
                 .attr('y', function(d) {
                     if(d.data.lv === 0) {
-                        return 49;
+                        return 29;
                     }
 
                     return 19;
@@ -450,16 +481,16 @@ $(() => {
                     //     ${d.parent.y + 100} , ${d.parent.x}
                     //     ${d.parent.y + 20} , ${d.parent.x}
                     //     T ${d.parent.y} , ${d.parent.x}`;
-                    return `M ${d.y} , ${d.x}
-                        C ${d.parent.y + 100} , ${d.x}
-                        ${d.parent.y + 100} , ${d.parent.x}
-                        ${d.parent.y + 20} , ${d.parent.x}
-                        T ${d.parent.y} , ${d.parent.x}`;
+                    return `M ${d.parent.y} , ${d.parent.x}
+                        C ${d.parent.y + 210} , ${d.x}
+                        ${d.parent.y + 280} , ${d.x}
+                        ${d.y} , ${d.x}
+                        T ${d.y} , ${d.x}`;
                 }else {
                     return `M ${d.y} , ${d.x}
                         C ${d.parent.y - 100} , ${d.x}
                         ${d.parent.y - 100} , ${d.parent.x}
-                        ${d.parent.y - 20} , ${d.parent.x}
+                        ${d.parent.y} , ${d.parent.x}
                         T ${d.parent.y} , ${d.parent.x}`;
                 }
             }
@@ -478,7 +509,6 @@ $(() => {
                 originData.out = deepClone(data.data.out);
                 operatingData.in = deepClone(data.data.in);
                 operatingData.out = deepClone(data.data.out);
-                console.log(originData);
 
                 // 显示全部隐藏企业.
                 $('.show-all-hide-node').on('click', function() {

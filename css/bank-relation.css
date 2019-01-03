@@ -15,7 +15,8 @@
     fill: #fff;
 }
 
-.node text {
+.node text,
+.line-amount {
     cursor: pointer;
     font: 12px sans-serif;
 }
@@ -27,4 +28,31 @@
 .tree-link.active {
     stroke: red;
     stroke-width: 2px;
+}
+
+.top-30-amount {
+    top: 66px;
+    right: 10px;
+    display: none;
+    position: fixed;
+}
+.top-30-amount ul {
+    color: #fff;
+    border-radius: 3px;
+    padding: 25px 25px 15px;
+    background-color: rgba(9, 9, 9, .7);
+}
+.top-30-amount li {
+    line-height: 1.5;
+    list-style-type: none;
+}
+.top-30-amount .top-30-close {
+    top: 0;
+    right: 10px;
+    color: #fff;
+    opacity: .5;
+    position: absolute;
+}
+.top-30-amount .top-30-close:hover {
+    opacity: 1;
 }
