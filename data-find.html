@@ -23,8 +23,16 @@
                 <a href="data-input.html" class="active"><i class="fa fa-database" style="font-size: 14px"></i> 数据导入</a>
             </nav>
         </header>
+        <div class= "row " style="margin-top:40px;">
+            <div class="col-md-6">
+                <div>
+                    <button class="btn btn-default btn-sm " id="outputExcel"> 导出EXCEL</button>
+                </div>
+            </div>
+        </div>
 
-        <div class="search-result">
+
+        <div class="search-result" style="margin-top:20px;">
             <table class="table table-hover table-notek table-search">
                 <thead>
                     <tr>
@@ -48,14 +56,28 @@
                 </thead>
                 <tbody></tbody>
             </table>
-            <p style="text-align: center;">搜索以展示结果</p>
         </div>
         
      </div>
+    <!-- 全部信息显示 -->
+    <div class="modal fade" id="datashow" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <p class="modal-msg1">Modal body text goes here.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary trigger-file" data-dismiss="modal">继续导入</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">完成导入</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="js/public.js"></script>
-    <script src="js/dataInput.js"></script>
-    <!-- Bootstrap select -->
-    <script src="libs/js/bootstrap-select.min.js"></script>
+    <script src="js/dataFind.js"></script>
 </body>
 </html>

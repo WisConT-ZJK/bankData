@@ -49,18 +49,13 @@ $(() => {
                 processData: false,  // 告诉jQuery不要去处理发送的数据
                 contentType: false,   // 告诉jQuery不要去设置Content-Type请求头
                 success: function (responseText) {
-                    
-                
                     let successLength = 0;
                     let failLength = 0;
-                    let successMeg='',failMeg='';
                     for(var success in responseText.data[0]) {
                         successLength++;
-                        successMeg += success+'\n';
                     }
                     for(var fail in responseText.data[1]) {
                         failLength++;
-                        failMeg += fail+'.sheet 导入失败 '+responseText.data[1][fail]+'\n'
                     }
                     if (failLength){
                         // $('.modal-msg1').html(failMeg);
@@ -83,15 +78,15 @@ $(() => {
                         $('.modal-body >table').show();
                         $('.modal-body >table tbody').empty();
                         $('.modal-body >table tbody').append(htmlstr);
-                        $('#resultOutput').modal('show');
-                    }else if(successLength){
+                        $('#resultOutput1').modal('show');
+                    }else if(successLength && (!failLength)){
                         $('.modal-msg1').html('导入成功');
-                        $('#resultOutput').modal('show');
+                        $('#resultOutput2').modal('show');
                         
                     }else{
                         //alert(responseText.message,'导入失败');
                         $('.modal-msg1').html(responseText.message);
-                        $('#resultOutput').modal('show');
+                        $('#resultOutput2').modal('show');
                     }
                 }
             });
