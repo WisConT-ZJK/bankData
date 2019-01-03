@@ -101,7 +101,7 @@ $(() => {
             
             // 设置拖拽和缩放的原点位置.
             $('.g-box').css('opacity', 1);
-            canvas.transition().call(zoom_handler.transform, d3.zoomIdentity.translate((Math.abs(bbox.x) + (sWid - bbox.width) / 2), 0).scale(1));
+            canvas.transition().call(zoom_handler.transform, d3.zoomIdentity.translate(width / 2, 0).scale(1));
         }, 0);
 
         let defs = svg.append('svg:defs')
@@ -144,8 +144,17 @@ $(() => {
 
         let links_data = links;
         let links_data_left = linksLeft;
+        let treeWidth = width / 2 - 150;
         
-        let tree = d3.tree().size([height, width / 2 - 160]);
+        let treeL = d3.tree().size([height, treeWidth]), treeR, treeRWidth = treeWidth;
+        // 动态计算右侧树的宽度.
+        links_data.forEach(function(l) {
+            if(l.lv > 1) {
+                treeRWidth = treeWidth + (treeWidth / 2) * (l.lv - 1);
+            }
+        });       
+        // 设置右侧树的宽度.
+        treeR = d3.tree().size([height, treeRWidth]);
 
         let root = stratify(links_data)
             .sort(function(a, b) { return (a.height - b.height) || a.id.localeCompare(b.id); });
@@ -153,8 +162,8 @@ $(() => {
         let root_left = stratify(links_data_left)
             .sort(function(a, b) { return (a.height - b.height) || a.id.localeCompare(b.id); });
 
-        tree(root);
-        tree(root_left)
+        treeR(root);
+        treeL(root_left);
         flip_nodes(root_left, root);
         let exLinks = buildExtraLinks(root);
         exLinks = exLinks.concat(buildExtraLinks(root_left));
@@ -320,8 +329,6 @@ $(() => {
                         let nodeId = d3.event.target.dataset.id,
                             nodeLv = d3.event.target.dataset.lv;
 
-                        console.log(d3.mouse(d3.event.target), d3.event);
-
                         let x = d3.event.pageX, 
                             y = d3.event.pageY,
                             bodyWidth = $(document.body).width();
@@ -343,14 +350,34 @@ $(() => {
                             }
 
                             if(dataType === 'buy') {
+                                let allChildren = [];
+                                // 递归收集存在后代节点的节点的所有后代节点的id.
+                                function getChild(oc) {
+                                    if(oc.children) {
+                                        oc.children.forEach(function(c) {
+                                            if(allChildren.join('').indexOf(c.id) <= -1) {
+                                                allChildren.push(c.id);
+                                                getChild(c);
+                                            }
+                                        });
+                                    }
+                                };
+
                                 operatingData.in.forEach(function(od, i) {
-                                    // 删除当前节点及其子节点.
-                                    if(od.id === nodeId || od.pid === nodeId) {
-                                        operatingData.in.splice(i, 1);
+                                    // 将当前节点放进待删除列表.
+                                    if(od.id === nodeId) {
+                                        allChildren.push(od.id);
+                                    }
+                                    // 将当前节点的所有后代节点放进待删除列表.
+                                    if(d.children) {
+                                        getChild(d);
                                     }
                                 });
+                                // 删除当前节点及其所有后代节点.
+                                operatingData.in = operatingData.in.filter(function(nc) {
+                                    return allChildren.indexOf(nc.id) <= -1;
+                                });
                             }
-
                             drawTreeChart(operatingData.in, operatingData.out);
                         });
 
