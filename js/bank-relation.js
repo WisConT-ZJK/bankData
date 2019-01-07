@@ -131,14 +131,13 @@ $(() => {
             .append('svg:path')
             .attr('d', 'M0,0 L0,4 L9,2 z')
             .attr('fill', '#999');
-        // define background color for link labels
+        // define white background color for link labels
         let txtBgnd = defs.append('filter')
             .attr('id', 'solid')
             .attr('x', 0)
             .attr('y', 0)
             .attr('width', 1)
-            .attr('height', 1)
-            .style('opacity', 0.5);
+            .attr('height', 1);
         txtBgnd.append('feFlood')
             .attr('flood-color', 'rgb(255, 255, 255)');
         txtBgnd.append('feComposite')
@@ -259,7 +258,8 @@ $(() => {
                 .attr('fill', '#d9534f')
                 .attr('class', 'line-amount')
                 .on('click', function(d) {
-                    console.log(d);
+                    $('.line-amount').attr('stroke', '');
+                    $(d3.event.target.parentNode).attr('stroke', '#d9534f');
                     $.ajax({
                         type: 'GET',
                         data: {
