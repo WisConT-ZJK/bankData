@@ -8,6 +8,7 @@
     <script src="libs/js/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
     <script src="libs/js/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
     <script src="libs/js/d3-v4.min.js"></script>
+    <script src="libs/js/saveSVGasPNG.js"></script>
     <link rel="stylesheet" type="text/css" href="libs/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="libs/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="libs/js/bootstrap-datepicker/css/bootstrap-datepicker3.min.css">
@@ -40,11 +41,12 @@
                 
                 <div class="btns">
                     <button class="btn btn-primary show-all-hide-node">显示全部隐藏企业</button>
-                    <button class="btn btn-primary">导出图片</button>
+                    <button class="btn btn-primary download-img">导出图片</button>
+                    <p style="color: #d9534f">提示：当节点过多时，可用鼠标拖拽图表和用鼠标滚轮缩放以显示重要部分.</p>
                 </div>
 
                 <div class="chart">
-                    <svg></svg>
+                    <svg id="chart-box"></svg>
                 </div>
             </div>
         </div>

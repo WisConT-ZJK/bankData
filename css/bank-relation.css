@@ -3,7 +3,7 @@
     padding-left: 8px;
 }
 .choose-date-tips {
-    color: red;
+    color: #d9534f;
     display: block;
 }
 
@@ -55,4 +55,22 @@
 }
 .top-30-amount .top-30-close:hover {
     opacity: 1;
+}
+
+.node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 3px;
+}
+
+.node text { font: 12px sans-serif; }
+
+.node--internal text {
+  text-shadow: 0 1px 0 #fff, 0 -1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 2px;
 }

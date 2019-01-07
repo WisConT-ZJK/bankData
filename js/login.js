@@ -22,12 +22,19 @@ $(() => {
 
         $.ajax({
             type: 'GET',
-            data: {},
-            url: '../js/mock/login.json',
+            data: {
+                username: name,
+                password: pwd
+            },
+            url: '/api/account/login',
+            // url: '../js/mock/login.json',
             success: data => {
-                if(data.status_code === 0) {
+                if(data.status === 0) {
                     location.href = 'index.html';
                     sessionStorage.setItem('user', 1);
+                }else {
+                    $('.modal-msg').html(data.message);
+                    $('.modal').modal('show');
                 }
             }
         });
