@@ -275,7 +275,6 @@ $(() => {
                 .attr('fill', '#d9534f')
                 .attr('class', 'line-amount')
                 .on('click', function(d) {
-                    console.log(d);
                     $('.line-amount').attr('stroke', '');
                     $(d3.event.target.parentNode).attr('stroke', '#d9534f');
 
