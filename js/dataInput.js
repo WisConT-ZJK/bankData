@@ -43,7 +43,7 @@ $(() => {
             formData.append('bank_name', $('.selectpicker').val());
             //console.log(formData);
             $.ajax({
-                url: 'http://localhost:1613/test/api/bank_data/upload',
+                url: '/api/bank_data/upload',
                 type: 'POST',
                 data: formData,
                 processData: false,  // 告诉jQuery不要去处理发送的数据

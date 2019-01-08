@@ -7,10 +7,12 @@
     <script src="libs/js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="libs/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="libs/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="css/data-input.css">
+    <link rel="stylesheet" type="text/css" href="css/data-find.css">
     <link rel="stylesheet" type="text/css" href="css/public.css">
-    <!-- Bootstrap select -->
-    <link href="libs/css/bootstrap-select.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="libs/css/bootstrap-select.min.css">
+    <link rel="stylesheet" type="text/css" href="libs/js/bootstrap-datepicker/css/bootstrap-datepicker3.min.css">
+    <link rel="stylesheet" type="text/css" href="libs/js/bootstrap-datepicker/css/bootstrap-datepicker3.standalone.min.css">
+    <link rel="stylesheet" type="text/css" href="libs/css/datatables.min.css">
 </head>
 <body>
     <div class="container-fluid">
@@ -24,19 +26,47 @@
             </nav>
         </header>
         <div class= "row " style="margin-top:40px;">
-            <div class="col-md-6">
-                <div>
-                    <button class="btn btn-default btn-sm " id="outputExcel"> 导出EXCEL</button>
+            <div class="col-md-1">
+                <button class="btn btn-default btn-sm " id="outputExcel"> 导出EXCEL</button>
+            </div>
+            <div class="col-md-4">
+                <div class=" input-daterange" id="flight-datepicker">
+                    <label>选择时间期限</label>
+                    <input class="" type="text" id="start-date" name="start" placeholder="请选择开始时间" data-date-format="yyyy-mm-dd" readonly/>
+                    -
+                    <input class="" type="text" id="end-date" name="end" placeholder="请选择结束时间" data-date-format="yyyy-mm-dd" readonly/>
+                    <span><button class="btn btn-default btn-sm " id="clearDate"> 清空</button></span>
                 </div>
+            </div>
+            <div class="col-md-4">
+                <div class="" id="flight-datepicker">
+                    <label>选择交易金额范围</label>
+                    <input class="" type="text" id="range1"  oninput="value=value.replace(/[^\d]/g,'')" placeholder="请输入金额下限" />
+                    -
+                    <input class="" type="text" id="range2" oninput="value=value.replace(/[^\d]/g,'')" placeholder="请输入金额上限" />
+                    <span class="range-tips"></span>
+                </div>
+            </div>
+            <!-- <div class="col-md-1">
+                <div class="" id="flight-datepicker">
+                    <input class="" type="text" id="range1" name="start" placeholder="输入关键字筛选" />
+                </div>
+            </div> -->
+            <div class="col-md-1">
+                <button class="btn btn-default btn-sm " id="filter"> 筛选</button>
+            </div>
+            <div class="col-md-1">
+                <button class="btn btn-default btn-sm " id="next"> 查看关系网</button>
             </div>
         </div>
 
 
         <div class="search-result" style="margin-top:20px;">
-            <table class="table table-hover table-notek table-search">
+            <table class="table table-hover table-notek table-search"  id="table" style="width:100%" >
                 <thead>
                     <tr>
-                        <th>全部选中</th>
+                        <!-- <th><input type="checkbox" id="quanxuan" />全选<br /></th> -->
+                        <th>全选</th>
                         <th>序号</th>
                         <th>户名</th>
                         <th>银行账号</th>
@@ -45,8 +75,8 @@
                         <th>开户行</th>
                         <th>交易日期</th>
                         <th>交易时间</th>
-                        <th>交易金额</th>
                         <th>借贷标志</th>
+                        <th>交易金额</th>
                         <th>账户余额</th>
                         <th>对方账号</th>
                         <th>对方户名</th>
@@ -79,5 +109,8 @@
 
     <script src="js/public.js"></script>
     <script src="js/dataFind.js"></script>
+    <script src="libs/js/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="libs/js/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+    <script src="libs/js/datatables.min.js"></script>
 </body>
 </html>
