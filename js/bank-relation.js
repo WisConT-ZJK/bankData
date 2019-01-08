@@ -87,6 +87,8 @@ $(() => {
     let closedLoopData = [];
     // svg位置数据.
     let chartPos;
+    // 参数.
+    let searchParams = new URLSearchParams(location.search);
 
     function drawTreeChart(links, linksLeft, buyClosedLoop) {
         // 判断数据是否有.
@@ -612,36 +614,41 @@ $(() => {
 
     };
 
-    $.ajax({
-        type: 'GET',
-        data: {
-            yhzh: '102012517010005396',
-            end_date: '20190909',
-            begin_date: '20090909'
-        },
-        url: '../js/mock/relations.json',
-        // url: '/api/bank_data/top_trade/',
-        success: data => {
-            if(data.status === 0) {
-                // 先保存原始数据.
-                originData.in = deepClone(data.data.out);
-                originData.out = deepClone(data.data.in);
-                operatingData.in = deepClone(data.data.out);
-                operatingData.out = deepClone(data.data.in);
+    if(searchParams.get('accountNumber')) {
+        $.ajax({
+            type: 'GET',
+            data: {
+                yhzh: searchParams.get('accountNumber'),
+                end_date: '20190909',
+                begin_date: '20090909'
+            },
+            // url: '../js/mock/relations.json',
+            url: '/api/bank_data/top_trade/',
+            success: data => {
+                if(data.status === 0) {
+                    // 先保存原始数据.
+                    originData.in = deepClone(data.data.out);
+                    originData.out = deepClone(data.data.in);
+                    operatingData.in = deepClone(data.data.out);
+                    operatingData.out = deepClone(data.data.in);
 
-                // 显示全部隐藏企业.
-                $('.show-all-hide-node').on('click', function() {
-                    operatingData.in = deepClone(originData.in);
-                    operatingData.out = deepClone(originData.out);
-                    if(closedLoopData.length > 0) {
-                        drawTreeChart(operatingData.in, operatingData.out, closedLoopData);
-                    }else {
-                        drawTreeChart(operatingData.in, operatingData.out);
-                    }
-                });
+                    // 显示全部隐藏企业.
+                    $('.show-all-hide-node').on('click', function() {
+                        operatingData.in = deepClone(originData.in);
+                        operatingData.out = deepClone(originData.out);
+                        if(closedLoopData.length > 0) {
+                            drawTreeChart(operatingData.in, operatingData.out, closedLoopData);
+                        }else {
+                            drawTreeChart(operatingData.in, operatingData.out);
+                        }
+                    });
 
-                drawTreeChart(operatingData.in, operatingData.out);
+                    drawTreeChart(operatingData.in, operatingData.out);
+                }
             }
-        }
-    });
+        });
+    }else {
+        $('.modal-msg').html('未提供银行账号无法查询关系图');
+        $('.modal').modal('show');
+    }
 });
