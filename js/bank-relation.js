@@ -83,7 +83,18 @@ $(() => {
         in: null,
         out: null
     };
+    // 闭环数据.
+    let closedLoopData = [];
+    // svg位置数据.
+    let chartPos;
+
     function drawTreeChart(links, linksLeft, buyClosedLoop) {
+        // 判断数据是否有.
+        if(links.length <= 0 && linksLeft.length <= 0) {
+            $('.chart >p').show();
+            return;
+        }
+
         // 清空svg.
         $('svg').empty();
 
@@ -104,8 +115,12 @@ $(() => {
         timer = setTimeout(() => {
             // 设置拖拽和缩放的原点位置.
             $('.g-box').css('opacity', 1);
-            // canvas.transition().duration(300).call(zoom_handler.transform, d3.zoomIdentity.translate(width / 2, 0).scale(1));
-            canvas.call(zoom_handler.transform, d3.zoomIdentity.translate(width / 2, 0).scale(1));
+            if(chartPos) {
+                let pos = chartPos.split(' ').shift().replace(/[a-z]|\(|\)/g, '').split(',');
+                canvas.call(zoom_handler.transform, d3.zoomIdentity.translate(pos[0], pos[1]).scale(1));
+            }else {
+                canvas.call(zoom_handler.transform, d3.zoomIdentity.translate(width / 2, 0).scale(1));
+            }
         }, 0);
 
         let defs = svg.append('svg:defs');
@@ -258,20 +273,26 @@ $(() => {
                 .attr('fill', '#d9534f')
                 .attr('class', 'line-amount')
                 .on('click', function(d) {
+                    console.log(d);
                     $('.line-amount').attr('stroke', '');
                     $(d3.event.target.parentNode).attr('stroke', '#d9534f');
+
+                    let params = {
+                        begin_date: '200909',
+                        end_date: '201909'
+                    };
+                    if(d.data.activity === 'sell') {
+                        params.zh_pay = d.data.account_number;
+                        params.zh_earn = d.parent.data.account_number;
+                    }
+                    if(d.data.activity === 'buy') {
+                        params.zh_pay = d.parent.data.account_number;
+                        params.zh_earn = d.data.account_number;
+                    }
+
                     $.ajax({
                         type: 'GET',
-                        data: {
-                            // zh_pay: d.data.account_number,
-                            // zh_earn: operatingData.in[0].account_number,
-                            // end_date: '20190909',
-                            // begin_date: '20090909'
-                            zh_pay: '102012517010005396',
-                            zh_earn: '443066137011705210160',
-                            begin_date: '200909',
-                            end_date: '201909'
-                        },
+                        data: params,
                         url: '/api/bank_data/top_trade_detail/',
                         // url: '../js/mock/top30.json',
                         success: data => {
@@ -280,13 +301,15 @@ $(() => {
                                     let hstr = ``;
                                     data.data.forEach(function(d) {
                                         hstr += `
-                                            <li>${d.date}：${toThousands(d.amount)}</li>
+                                            <li>${d.date}：¥ ${toThousands(d.amount)}</li>
                                         `;
                                     });
                                     $('.top-30-amount').show();
                                     $('.top-30-amount ul').empty();
                                     $('.top-30-amount ul').append(hstr);
                                 }else {
+                                    $('.top-30-amount ul').empty();
+                                    $('.top-30-amount').hide();
                                     $('.modal-msg').html('暂无交易明细列表数据');
                                     $('.modal').modal('show');
                                 }
@@ -315,9 +338,9 @@ $(() => {
                 .style('text-anchor', 'middle')
                 .text(function(d) { 
                     if(d.data.lv > 1) {
-                        return `2018/01/01 交易总额：${toThousands(d.data.value)}`;
+                        return `2018/01/01 交易总额：¥${toThousands(d.data.value)}`;
                     }
-                    return toThousands(d.data.value);
+                    return '¥' + toThousands(d.data.value);
                 });
 
             let node = svg.selectAll('.node');
@@ -387,6 +410,8 @@ $(() => {
                         // 隐藏节点.
                         let dataType = d3.event.target.dataset.type;
                         $('.btn-operating .hide-node').on('click', function() {
+                            chartPos = $('svg .g-box').attr('transform');
+
                             if(dataType === 'sell') {
                                 operatingData.out.forEach(function(od, i) {
                                     if(od.id === nodeId) {
@@ -429,30 +454,49 @@ $(() => {
 
                         // 显示可疑资金.
                         $('.btn-operating .show-suspicious').on('click', function() {
+                            chartPos = $('svg .g-box').attr('transform');
+                            
+                            let params = {
+                                pri_yhzh: d.parent.data.account_number,
+                                sec_yhzh: d.data.account_number,
+                                yhzh: d.data.account_number,
+                                begin_date: '200909',
+                                end_date: '201909'
+                            };
                             $.ajax({
                                 type: 'GET',
-                                data: {id: nodeId, lv: nodeLv},
+                                data: params,
+                                // url: '/api/bank_data/suspicious_trade/',
                                 url: '../js/mock/suspicious.json',
                                 success: data => {
-                                    if(data.status_code === 0) {
-                                        let isRepeat, closedLoopArr = [];
+                                    if(data.status === 0 && data.data.id) {
+                                        let isRepeat;
 
+                                        // 正常子节点(非闭环)带闭环初始化检测.
                                         operatingData.in.forEach(function(d) {
                                             if(d.id === data.data.id) {
                                                 isRepeat = true;
                                             }
-                                            // 闭环数据.
-                                            if(d.id === data.data.id && d.pid !== data.data.pid) {
-                                                closedLoopArr.push(data.data);
+
+                                            // 闭环初始化检测.
+                                            if(d.id === data.data.id && d.pid !== data.data.pid && JSON.stringify(closedLoopData).indexOf(data.data.id) <= -1) {
+                                                closedLoopData.push(data.data);
                                             }
                                         });
-
                                         if(!isRepeat) {
                                             operatingData.in.push(data.data);
                                         }
 
-                                        if(closedLoopArr.length > 0) {
-                                            drawTreeChart(operatingData.in, operatingData.out, closedLoopArr);
+                                        // 二次闭环节点数据.
+                                        // closedLoopData.forEach(function(d) {
+                                        //     if(d.id !== data.data.id) {
+                                        //         closedLoopData.push(data.data);
+                                        //     }
+                                        // });
+                                        
+                                        console.log(closedLoopData)
+                                        if(closedLoopData.length > 0) {
+                                            drawTreeChart(operatingData.in, operatingData.out, closedLoopData);
                                         }else {
                                             drawTreeChart(operatingData.in, operatingData.out);
                                         }
@@ -545,6 +589,10 @@ $(() => {
                                 C ${d.parent.y -25} , ${d.flow.x}
                                 ${d.parent.y + 200} , ${d.flow.x + 200}
                                 ${d.flow.y + 10} , ${d.flow.x + 25}`;
+                        // return `M ${d.parent.y + 25} , ${d.parent.x}
+                        //         C ${d.parent.y -25} , ${d.flow.x}
+                        //         ${d.parent.y} , ${d.flow.x}
+                        //         ${d.flow.y + 10} , ${d.flow.x + 25}`;
                     }
 
                     return `M ${d.parent.y} , ${d.parent.x}
@@ -571,8 +619,8 @@ $(() => {
             end_date: '20190909',
             begin_date: '20090909'
         },
-        // url: '../js/mock/relations.json',
-        url: '/api/bank_data/top_trade/',
+        url: '../js/mock/relations.json',
+        // url: '/api/bank_data/top_trade/',
         success: data => {
             if(data.status === 0) {
                 // 先保存原始数据.
@@ -585,7 +633,11 @@ $(() => {
                 $('.show-all-hide-node').on('click', function() {
                     operatingData.in = deepClone(originData.in);
                     operatingData.out = deepClone(originData.out);
-                    drawTreeChart(operatingData.in, operatingData.out);
+                    if(closedLoopData.length > 0) {
+                        drawTreeChart(operatingData.in, operatingData.out, closedLoopData);
+                    }else {
+                        drawTreeChart(operatingData.in, operatingData.out);
+                    }
                 });
 
                 drawTreeChart(operatingData.in, operatingData.out);

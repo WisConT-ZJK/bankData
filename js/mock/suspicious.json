@@ -1,5 +1,5 @@
 {
-    "status_code": 0,
+    "status": 0,
     "message": "获取可疑资金成功",
     "data": {
         "pid": "91441900MA4UKCKT53S#buy",
