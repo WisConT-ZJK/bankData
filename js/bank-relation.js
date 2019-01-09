@@ -1,4 +1,64 @@
 $(() => {
+    let timer = null;
+    // 图表原始数据.
+    let originData = {
+        in: null,
+        out: null
+    };
+    // 图表操作数据.
+    let operatingData = {
+        in: null,
+        out: null
+    };
+    // 闭环数据.
+    let closedLoopData = [
+        // {
+        //     "pid": "91441900MA4UKCKT53S#buy",
+        //     "id": "440301192309343#buy",
+        //     "value": 13118.0,
+        //     "activity": "buy",
+        //     "type": "",
+        //     "lv": 4,
+        //     "account_name": "对方感到孤独",
+        //     "account_number": "aas",
+        //     "related_bank": "招商银行",
+        //     "name": "一个公司"
+        // },
+        // // 闭环2
+        // {
+        //     "pid": "440300552135086#buy",
+        //     "id": "91441900MA4UKCKT9S#buy",
+        //     "value": 1098908.0,
+        //     "activity": "buy",
+        //     "type": "",
+        //     "lv": 3,
+        //     "account_name": "对方感到孤独",
+        //     "account_number": "434535",
+        //     "related_bank": "招商银行",
+        //     "name": "我是可疑资金1"
+        // },
+        // // 闭环3
+        // {
+        //     "pid": "9144030070849160XJ#buy",
+        //     "id": "91440300793869768X#buy",
+        //     "value": 1146990.0,
+        //     "activity": "buy",
+        //     "type": "",
+        //     "lv": 2,
+        //     "account_name": "对方感到孤独",
+        //     "account_number": "4",
+        //     "related_bank": "招商银行",
+        //     "name": "91440300793869768X"
+        // }
+    ];
+    // svg位置数据.
+    let chartPos;
+    // 参数.
+    let searchParams = new URLSearchParams(location.search);
+    // 日期查询.
+    let startDate, endDate;
+
+
     // 设置高度.
     $('.chart').css('height', $(window).height() - 254); // 减去的224为页面其他元素的高度和25px下边距.
 
@@ -18,7 +78,6 @@ $(() => {
         saveSvgAsPng(document.getElementById('chart-box'), 'related.png', {backgroundColor: "#fff"});
     });
 
-    let startDate, endDate;
     $('#date1, #date2').datepicker({
         format: 'yyyy-mm-dd',
         clearBtn: true,
@@ -26,7 +85,7 @@ $(() => {
         autoclose: true,
         todayHighlight: true
     }).on('changeDate', function(cs) {
-        let date = cs.format(),
+        let date = cs.format('yyyymmdd'),
             flag = $(this).attr('data-flag');
 
         // 清空提示.
@@ -69,28 +128,11 @@ $(() => {
             $('.choose-date-tips').html('结束日期必须在开始日期之后');
             return;
         }
-        console.log(startDate, endDate);
+
+        init(startDate, endDate);
     });
 
-    let timer = null;
-    // 图表原始数据.
-    let originData = {
-        in: null,
-        out: null
-    };
-    // 图表操作数据.
-    let operatingData = {
-        in: null,
-        out: null
-    };
-    // 闭环数据.
-    let closedLoopData = [];
-    // svg位置数据.
-    let chartPos;
-    // 参数.
-    let searchParams = new URLSearchParams(location.search);
-
-    function drawTreeChart(links, linksLeft, buyClosedLoop) {
+    function drawTreeChart(links, linksLeft, buyClosedLoop, s, e) {
         // 判断数据是否有.
         if(links.length <= 0 && linksLeft.length <= 0) {
             $('.chart >p').show();
@@ -279,16 +321,21 @@ $(() => {
                     $(d3.event.target.parentNode).attr('stroke', '#d9534f');
 
                     let params = {
-                        begin_date: '200909',
-                        end_date: '201909'
+                        begin_date: s,
+                        end_date: e
                     };
                     if(d.data.activity === 'sell') {
                         params.zh_pay = d.data.account_number;
                         params.zh_earn = d.parent.data.account_number;
                     }
                     if(d.data.activity === 'buy') {
-                        params.zh_pay = d.parent.data.account_number;
-                        params.zh_earn = d.data.account_number;
+                        if(!d.flow) {
+                            params.zh_pay = d.parent.data.account_number;
+                            params.zh_earn = d.data.account_number;
+                        }else {
+                            params.zh_pay = d.flow.data.account_number;
+                            params.zh_earn = d.data.account_number;
+                        }
                     }
 
                     $.ajax({
@@ -330,9 +377,6 @@ $(() => {
                         return '30%';
                     }
                     if(d.data.activity === 'buy') {
-                        if(d.data.extraBuy === 1) {
-                            return '35%';
-                        }
                         if(d.data.lv > 1) {
                             return '50%';
                         }
@@ -360,24 +404,6 @@ $(() => {
                 .attr('filter', function(d) {
                     if(d.data.lv === 0) {
                         return 'url(#solid)';
-                    }
-                })
-                .attr('topid', function(d) {
-                    if(d.data.lv > 0) {
-                        let par = d.parent;
-                        while(par.data.lv !== 0) {
-                            par = par.parent;
-                        }
-                        return par.data.account_number;
-                    }
-                })
-                .attr('secid', function(d) {
-                    if(d.data.lv > 0) {
-                        let par = d;
-                        while(par.data.lv !== 1) {
-                            par = par.parent;
-                        }
-                        return par.data.account_number;
                     }
                 })
                 .style('text-anchor', function(d) {
@@ -409,8 +435,11 @@ $(() => {
                 // })
                 .on('click', function(d) {
                     if(d.data.lv > 0) {
-                        let nodeId = d3.event.target.dataset.id,
-                            nodeLv = d3.event.target.dataset.lv;
+                        let taeget = d3.event.target;
+                        let priYhzh = taeget.dataset.topid,
+                            secYhzh = taeget.dataset.secid,
+                            nodeId = taeget.dataset.id,
+                            nodeLv = taeget.dataset.lv;
 
                         let x = d3.event.pageX, 
                             y = d3.event.pageY,
@@ -455,7 +484,7 @@ $(() => {
                                         });
                                     }
                                 };
-
+                                
                                 operatingData.in.forEach(function(od, i) {
                                     // 将当前节点放进待删除列表.
                                     if(od.id === nodeId) {
@@ -470,22 +499,28 @@ $(() => {
                                 operatingData.in = operatingData.in.filter(function(nc) {
                                     return allChildren.indexOf(nc.id) <= -1;
                                 });
+
+                                // 从闭环中删除pid等于当前节点的节点.
+                                closedLoopData = closedLoopData.filter(function(cd) {
+                                    return cd.pid !== nodeId && cd.id !== nodeId;
+                                });
                             }
-                            drawTreeChart(operatingData.in, operatingData.out);
+
+                            drawTreeChart(operatingData.in, operatingData.out, closedLoopData, s, e);
                         });
 
                         // 显示可疑资金.
+                        $('.btn-operating .show-suspicious').unbind('click');
                         $('.btn-operating .show-suspicious').on('click', function() {
                             chartPos = $('svg .g-box').attr('transform');
-                            console.log(d);
                             let params = {
+                                begin_date: s,
+                                end_date: e,
                                 id: d.data.id,
                                 lv: d.data.lv,
-                                pri_yhzh: d.parent.data.account_number,
-                                sec_yhzh: d.data.account_number,
-                                yhzh: d.data.account_number,
-                                // begin_date: '200909',
-                                // end_date: '201909'
+                                pri_yhzh: priYhzh,
+                                sec_yhzh: secYhzh,
+                                yhzh: d.data.account_number
                             };
                             $.ajax({
                                 type: 'GET',
@@ -510,20 +545,8 @@ $(() => {
                                         if(!isRepeat) {
                                             operatingData.in.push(data.data);
                                         }
-
-                                        // 二次闭环节点数据.
-                                        // closedLoopData.forEach(function(d) {
-                                        //     if(d.id !== data.data.id) {
-                                        //         closedLoopData.push(data.data);
-                                        //     }
-                                        // });
-                                        
-                                        console.log(closedLoopData)
-                                        if(closedLoopData.length > 0) {
-                                            drawTreeChart(operatingData.in, operatingData.out, closedLoopData);
-                                        }else {
-                                            drawTreeChart(operatingData.in, operatingData.out);
-                                        }
+                                        console.log(closedLoopData);
+                                        drawTreeChart(operatingData.in, operatingData.out, closedLoopData, s, e);
                                     }else {
                                         $('.modal-msg').html('可疑资金流向为空');
                                         $('.modal').modal('show');
@@ -549,6 +572,24 @@ $(() => {
                 }
             };
             nametext.append('tspan')
+                .attr('data-topid', function(d) {
+                    if(d.data.lv > 0) {
+                        let par = d.parent;
+                        while(par.data.lv !== 0) {
+                            par = par.parent;
+                        }
+                        return par.data.account_number;
+                    }
+                })
+                .attr('data-secid', function(d) {
+                    if(d.data.lv > 0) {
+                        let par = d;
+                        while(par.data.lv !== 1) {
+                            par = par.parent;
+                        }
+                        return par.data.account_number;
+                    }
+                })
                 .attr('data-id', function(d) {
                     return d.data.id;
                 })
@@ -569,6 +610,24 @@ $(() => {
                 .text(function(d) { return d.data.name; });
 
             nametext.append('tspan')
+                .attr('data-topid', function(d) {
+                    if(d.data.lv > 0) {
+                        let par = d.parent;
+                        while(par.data.lv !== 0) {
+                            par = par.parent;
+                        }
+                        return par.data.account_number;
+                    }
+                })
+                .attr('data-secid', function(d) {
+                    if(d.data.lv > 0) {
+                        let par = d;
+                        while(par.data.lv !== 1) {
+                            par = par.parent;
+                        }
+                        return par.data.account_number;
+                    }
+                })
                 .attr('data-id', function(d) {
                     return d.data.id;
                 })
@@ -589,6 +648,24 @@ $(() => {
                 .text(function(d) { return d.data.account_number; });
 
             nametext.append('tspan')
+                .attr('data-topid', function(d) {
+                    if(d.data.lv > 0) {
+                        let par = d.parent;
+                        while(par.data.lv !== 0) {
+                            par = par.parent;
+                        }
+                        return par.data.account_number;
+                    }
+                })
+                .attr('data-secid', function(d) {
+                    if(d.data.lv > 0) {
+                        let par = d;
+                        while(par.data.lv !== 1) {
+                            par = par.parent;
+                        }
+                        return par.data.account_number;
+                    }
+                })
                 .attr('data-id', function(d) {
                     return d.data.id;
                 })
@@ -612,19 +689,25 @@ $(() => {
                 if (d.data.activity == 'buy') {
                     // closed loop.
                     if(d.data.extraBuy === 1) {
-                        console.log(d);
-                        let par = {};
-                        // while(par.id)
-                        return `M ${d.parent.y + 25} , ${d.parent.x + 35}
-                                C ${d.parent.y -25} , ${d.x + 8}
-                                ${d.parent.y + 200} , ${d.x + 150}
-                                ${d.y + 10} , ${d.x + 25}`;
-                        // return `M ${d.y} , ${d.x}
-                        //         C ${d.parent.y + 200} , ${d.x}
-                        //         ${d.parent.y + 200} , ${d.parent.x + 100}
-                        //         ${d.parent.y} , ${d.parent.x + 100}
-                        //         T ${d.parent.y} , ${d.parent.x}`;
-
+                        let currentPar = d.parent, flowPar = d.flow;
+                        
+                        while(currentPar.data.lv !== 1) {
+                            currentPar = currentPar.parent;
+                        }
+                        while(flowPar.data.lv !== 1) {
+                            flowPar = flowPar.parent;
+                        }
+                        // console.log(currentPar, flowPar);
+                        if(currentPar.data.id === flowPar.data.id) {
+                            return `M ${d.parent.y + 25} , ${d.parent.x + 35}
+                                    C ${d.parent.y -25} , ${d.x + 8}
+                                    ${d.parent.y + 200} , ${d.x + 150}
+                                    ${d.y + 10} , ${d.x + 25}`;
+                        }
+                        return `M ${d.y} , ${d.x}
+                                C ${d.parent.y + 300} , ${d.x}
+                                ${d.parent.y + 300} , ${d.parent.x}
+                                ${d.parent.y} , ${d.parent.x}`;
                     }
 
                     return `M ${d.parent.y} , ${d.parent.x}
@@ -643,69 +726,43 @@ $(() => {
 
     };
 
-    if(searchParams.get('accountNumber')) {
-        $.ajax({
-            type: 'GET',
-            data: {
-                yhzh: searchParams.get('accountNumber'),
-                // end_date: '20190909',
-                // begin_date: '20090909'
-            },
-            url: '../js/mock/relations.json',
-            // url: '/api/bank_data/top_trade/',
-            success: data => {
-                if(data.status === 0) {
-                    // 先保存原始数据.
-                    originData.in = deepClone(data.data.out);
-                    originData.out = deepClone(data.data.in);
-                    operatingData.in = deepClone(data.data.out);
-                    operatingData.out = deepClone(data.data.in);
+    function init(s, e) {
+        if(searchParams.get('accountNumber')) {
+            $.ajax({
+                type: 'GET',
+                data: {
+                    end_date: e,
+                    begin_date: s,
+                    yhzh: searchParams.get('accountNumber')
+                },
+                // url: '../js/mock/relations.json',
+                url: '/api/bank_data/top_trade/',
+                success: data => {
+                    if(data.status === 0) {
+                        // 先保存原始数据.
+                        originData.in = deepClone(data.data.out);
+                        originData.out = deepClone(data.data.in);
+                        operatingData.in = deepClone(data.data.out);
+                        operatingData.out = deepClone(data.data.in);
 
-                    // 显示全部隐藏企业.
-                    $('.show-all-hide-node').on('click', function() {
-                        operatingData.in = deepClone(originData.in);
-                        operatingData.out = deepClone(originData.out);
-                        if(closedLoopData.length > 0) {
-                            drawTreeChart(operatingData.in, operatingData.out, closedLoopData);
-                        }else {
-                            drawTreeChart(operatingData.in, operatingData.out);
-                        }
-                    });
+                        // 显示全部隐藏企业.
+                        $('.show-all-hide-node').on('click', function() {
+                            chartPos = '';
+                            closedLoopData = [];
+                            operatingData.in = deepClone(originData.in);
+                            operatingData.out = deepClone(originData.out);
+                            drawTreeChart(operatingData.in, operatingData.out, closedLoopData, s, e);
+                        });
 
-                    drawTreeChart(operatingData.in, operatingData.out, [
-                        // 闭环1
-                        // {
-                        //     "pid": "91441900MA4UKCKT53S#buy",
-                        //     "id": "440301192309343#buy",
-                        //     "value": 13118.0,
-                        //     "activity": "buy",
-                        //     "type": "",
-                        //     "lv": 3,
-                        //     "account_name": "对方感到孤独",
-                        //     "account_number": "aas",
-                        //     "related_bank": "招商银行",
-                        //     "NSRSBH": "91441900MA4UKCKT8L",
-                        //     "DJXH": "unknown",
-                        //     "name": "一个公司"
-                        // },
-                        {
-                            "pid": "440300552135086#buy",
-                            "id": "91441900MA4UKCKT9S#buy",
-                            "value": 1098908.0,
-                            "activity": "buy",
-                            "type": "",
-                            "lv": 1,
-                            "account_name": "对方感到孤独",
-                            "account_number": "434535",
-                            "related_bank": "招商银行",
-                            "name": "我是可疑资金1"
-                        },
-                    ]);
+                        drawTreeChart(operatingData.in, operatingData.out, closedLoopData, s, e);
+                    }
                 }
-            }
-        });
-    }else {
-        $('.modal-msg').html('未提供银行账号无法查询关系图');
-        $('.modal').modal('show');
-    }
+            });
+        }else {
+            $('.modal-msg').html('未提供银行账号无法查询关系图');
+            $('.modal').modal('show');
+        }
+    };
+    init(startDate, endDate);
+
 });
