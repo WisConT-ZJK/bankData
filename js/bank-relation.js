@@ -618,8 +618,8 @@ $(() => {
             type: 'GET',
             data: {
                 yhzh: searchParams.get('accountNumber'),
-                end_date: '20190909',
-                begin_date: '20090909'
+                // end_date: '20190909',
+                // begin_date: '20090909'
             },
             // url: '../js/mock/relations.json',
             url: '/api/bank_data/top_trade/',
