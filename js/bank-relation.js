@@ -189,6 +189,16 @@ $(() => {
             .append('svg:path')
             .attr('d', 'M0,0 L0,4 L9,2 z')
             .attr('fill', '#999');
+        defs.append('svg:marker')    // This section adds in the arrows
+            .attr('id', 'closed-loop')
+            .attr('refX', 2)
+            .attr('refY', 3)
+            .attr('markerWidth', 10)
+            .attr('markerHeight', 10)
+            .attr('orient', '0')
+            .append('svg:path')
+            .attr('d', 'M9,1 L0,3 L9,5 z')
+            .attr('fill', '#999');
         // define white background color for link labels
         let txtBgnd = defs.append('filter')
             .attr('id', 'solid')
@@ -298,14 +308,36 @@ $(() => {
                     if (d.data.activity == 'sell') {
                         return `url(#${d.data.activity})`
                     }else {
-                        if(d.data.extraBuy === 1) {
-                            return 'url(#sell)';
+                        if(d.data.activity == 'buy' && d.data.extraBuy === 1) {
+                            let currentPar = d.parent || d, flowPar = d.flow;
+                            while(currentPar.data.lv !== 1 && currentPar.parent) {
+                                currentPar = currentPar.parent;
+                            }
+                            while(flowPar.data.lv !== 1 && flowPar.parent) {
+                                flowPar = flowPar.parent;
+                            }
+                            if(currentPar.data.id === flowPar.data.id) {
+                                return 'url(#sell)';
+                            }
                         }
                     }
                 })
                 .attr('marker-end', d => {
                     if(d.data.activity == 'buy' && !d.data.extraBuy) {
                         return `url(#${d.data.activity})`;
+                    }
+
+                    if(d.data.activity == 'buy' && d.data.extraBuy === 1) {
+                        let currentPar = d.parent || d, flowPar = d.flow;
+                        while(currentPar.data.lv !== 1 && currentPar.parent) {
+                            currentPar = currentPar.parent;
+                        }
+                        while(flowPar.data.lv !== 1 && flowPar.parent) {
+                            flowPar = flowPar.parent;
+                        }
+                        if(currentPar.data.id !== flowPar.data.id) {
+                            return 'url(#closed-loop)';
+                        }
                     }
                 })
                 .attr('stroke', '#337ab7');
@@ -688,25 +720,31 @@ $(() => {
                 if (d.data.activity == 'buy') {
                     // closed loop.
                     if(d.data.extraBuy === 1) {
-                        let currentPar = d.parent, flowPar = d.flow;
-                        
-                        while(currentPar.data.lv !== 1) {
+                        let currentPar = d.parent || d, flowPar = d.flow;
+                        while(currentPar.data.lv !== 1 && currentPar.parent) {
                             currentPar = currentPar.parent;
                         }
-                        while(flowPar.data.lv !== 1) {
+                        while(flowPar.data.lv !== 1 && flowPar.parent) {
                             flowPar = flowPar.parent;
                         }
-                        // console.log(currentPar, flowPar);
                         if(currentPar.data.id === flowPar.data.id) {
                             return `M ${d.parent.y + 25} , ${d.parent.x + 35}
                                     C ${d.parent.y -25} , ${d.x + 8}
                                     ${d.parent.y + 200} , ${d.x + 150}
                                     ${d.y + 10} , ${d.x + 25}`;
                         }
-                        return `M ${d.y} , ${d.x}
-                                C ${d.parent.y + 300} , ${d.x}
-                                ${d.parent.y + 300} , ${d.parent.x}
-                                ${d.parent.y} , ${d.parent.x}`;
+
+                        if(currentPar.data.lv === 0) {
+                            return `M ${d.y} , ${d.x}
+                                    C ${d.parent.y + 300} , ${d.x - 20}
+                                    ${d.parent.y + 300} , ${d.parent.x - 20}
+                                    ${d.parent.y + (currentPar.data.name.length * 7) + 5} , ${d.parent.x + 5}`;
+                        }else {
+                            return `M ${d.y + 50} , ${d.x}
+                                    C ${d.parent.y + 300} , ${d.x - 20}
+                                    ${d.parent.y + 300} , ${d.parent.x - 20}
+                                    ${d.parent.y + 50} , ${d.parent.x}`;
+                        }
                     }
 
                     return `M ${d.parent.y} , ${d.parent.x}
