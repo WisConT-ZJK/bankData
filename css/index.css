@@ -3,6 +3,7 @@
     padding-left: 8px;
 }
 
+.res-tips,
 .search-result >table {
     display: none;
 }
