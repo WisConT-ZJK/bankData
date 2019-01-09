@@ -133,18 +133,22 @@ $(() => {
         }else{
             end = end.toString().replace(/-/g, "")
         }
-        let formData = new FormData();//初始化一个FormData对象
-        formData.append('account_number', accountNumber);//将文件塞入FormData
-        formData.append('trade_amount_min', range1);
-        formData.append('trade_amount_max', range2);
-        formData.append('trade_date_start', start);
-        formData.append('trade_date_end', end);
+        // let formData = new FormData();//初始化一个FormData对象
+        // formData.append('account_number', accountNumber);//将文件塞入FormData
+        // formData.append('trade_amount_min', range1);
+        // formData.append('trade_amount_max', range2);
+        // formData.append('trade_date_start', start);
+        // formData.append('trade_date_end', end);
         $.ajax({
             url: 'api/bank_data/account_detail/',
-            type: 'POST',
-            data: formData,
-            processData: false,  // 告诉jQuery不要去处理发送的数据
-            contentType: false,   // 告诉jQuery不要去设置Content-Type请求头
+            type: 'GET',
+            data: {
+                account_number: accountNumber,
+                trade_amount_min: range1,
+                trade_amount_max: range2,
+                trade_date_start: start,
+                trade_date_end: end,
+            },
             success: function (responseText) {
                 drawtable(responseText)
             }
