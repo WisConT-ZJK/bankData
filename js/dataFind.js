@@ -141,7 +141,7 @@ $(() => {
         formData.append('trade_date_end', end);
         $.ajax({
             url: 'api/bank_data/account_detail/',
-            type: 'POST',
+            type: 'GET',
             data: formData,
             processData: false,  // 告诉jQuery不要去处理发送的数据
             contentType: false,   // 告诉jQuery不要去设置Content-Type请求头
