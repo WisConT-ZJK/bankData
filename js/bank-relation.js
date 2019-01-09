@@ -3,7 +3,7 @@ $(() => {
         location.href = 'login.html';
         return;
     }
-    
+
     let timer = null;
     // 图表原始数据.
     let originData = {
@@ -764,8 +764,8 @@ $(() => {
                 }
             });
         }else {
-            $('.modal-msg').html('未提供银行账号无法查询关系图');
-            $('.modal').modal('show');
+            $('.chart >p').html('未提供银行账号无法查询关系图');
+            $('.chart >p').show();
         }
     };
     init(startDate, endDate);

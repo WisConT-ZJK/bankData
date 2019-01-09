@@ -13,6 +13,8 @@ function checkLoginStatus() {
         return false;
     }
 
+    $('span.username').html(user);
+
     return true;
 };
 

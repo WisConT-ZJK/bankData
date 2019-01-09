@@ -30,8 +30,20 @@ $(() => {
             // url: '../js/mock/login.json',
             success: data => {
                 if(data.status === 0) {
-                    location.href = 'index.html';
-                    sessionStorage.setItem('user', 1);
+                    console.log(data);
+                    
+
+                    // 获取用户信息
+                    $.ajax({
+                        type: 'GET',
+                        url: '/api/account/user',
+                        success: data => {
+                            if(data.status === 0) {
+                                location.href = 'index.html';
+                                sessionStorage.setItem('user', data.data.username);
+                            }
+                        }
+                    });
                 }else {
                     $('.modal-msg').html(data.message);
                     $('.modal').modal('show');
