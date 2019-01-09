@@ -2,9 +2,16 @@
     margin: 25px 0;
     padding-left: 8px;
 }
-.choose-date-tips {
+.choose-date.choose-date--disabled .choose-date__item {
+    pointer-events: none;
+    background-color: #eee;
+}
+.choose-date .choose-date__tips {
     color: #d9534f;
     display: block;
+}
+.choose-date .choose-date__item.choose-date__item--active {
+    background-color: #fff;
 }
 
 .chart {

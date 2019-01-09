@@ -90,11 +90,11 @@ $(() => {
         autoclose: true,
         todayHighlight: true
     }).on('changeDate', function(cs) {
-        let date = cs.format('yyyymmdd'),
+        let date = cs.format(),
             flag = $(this).attr('data-flag');
 
         // 清空提示.
-        $('.choose-date-tips').empty();
+        $('.choose-date__tips').empty();
 
         // 设置起始日期.
         if(flag === 'start') {
@@ -130,21 +130,14 @@ $(() => {
 
         // 如果结束日期大于开始日期.
         if(+new Date(endDate) < +new Date(startDate)) {
-            $('.choose-date-tips').html('结束日期必须在开始日期之后');
+            $('.choose-date__tips').html('结束日期必须在开始日期之后');
             return;
         }
 
-        init(startDate, endDate);
+        init(startDate.replace(/-/g, ''), endDate.replace(/-/g, ''));
     });
 
     function drawTreeChart(links, linksLeft, buyClosedLoop, s, e) {
-        // 判断数据是否有.
-        if(links.length <= 0 && linksLeft.length <= 0) {
-            $('.chart >p').show();
-            $('button.show-all-hide-node, button.download-img').addClass('disabled');
-            return;
-        }
-
         // 清空svg.
         $('svg').empty();
 
@@ -745,6 +738,16 @@ $(() => {
                 url: '/api/bank_data/top_trade/',
                 success: data => {
                     if(data.status === 0) {
+                        // 判断数据是否有.
+                        if(data.data.out.length <= 0 && data.data.in.length <= 0) {
+                            $('.chart >p').show();
+                            $('.choose-date').addClass('choose-date--disabled');
+                            $('button.show-all-hide-node, button.download-img, .choose-date input').addClass('disabled');
+                            return;
+                        }else {
+                            $('.choose-date input').addClass('choose-date__item--active');
+                        }
+
                         // 先保存原始数据.
                         originData.in = deepClone(data.data.out);
                         originData.out = deepClone(data.data.in);
@@ -767,6 +770,7 @@ $(() => {
         }else {
             $('.chart >p').html('未提供银行账号无法查询关系图');
             $('.chart >p').show();
+            $('.choose-date').addClass('choose-date--disabled');
             $('button.show-all-hide-node, button.download-img').addClass('disabled');
         }
     };
