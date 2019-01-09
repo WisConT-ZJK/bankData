@@ -1,4 +1,9 @@
 $(() => {
+    if(!checkLoginStatus()) {
+        location.href = 'login.html';
+        return;
+    }
+    
     let timer = null;
     // 图表原始数据.
     let originData = {
