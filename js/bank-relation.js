@@ -391,7 +391,7 @@ $(() => {
                 .style('text-anchor', 'middle')
                 .text(function(d) { 
                     if(d.data.lv > 1) {
-                        return `2018/01/01 交易总额：¥${toThousands(d.data.value)}`;
+                        return `${d.data.trade_date} ${d.data.type == 1 ? '单笔交易' : '交易总额'}：¥${toThousands(d.data.value)}`;
                     }
                     return '¥' + toThousands(d.data.value);
                 });
@@ -550,7 +550,7 @@ $(() => {
                                         if(!isRepeat) {
                                             operatingData.in.push(data.data);
                                         }
-                                        console.log(closedLoopData);
+                                        
                                         drawTreeChart(operatingData.in, operatingData.out, closedLoopData, s, e);
                                     }else {
                                         $('.modal-msg').html('可疑资金流向为空');
