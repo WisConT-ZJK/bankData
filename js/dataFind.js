@@ -32,20 +32,30 @@ $(() => {
 
 
     //全选
-    // $("#quanxuan").click(function(){//给全选按钮加上点击事件
-    //     let xz = $(this).prop("checked");//判断全选按钮的选中状态
-    //     $(".datachoose").prop("checked",xz);  //让class名为qx的选项的选中状态和全选按钮的选中状态一致。  
-    //     })
+    $("#quanxuan").click(function(){//给全选按钮加上点击事件
+        if($(this).prop("checked")){
+            $('#table').DataTable().rows().select()
+        }else{
+            $('#table').DataTable().rows().deselect();
+        }
+    })
+
     //导出excel
     $('#outputExcel').click(function () {
         let checkedbox = [];
-        $('input:checkbox:checked').each(function () {
-            checkedbox.push($(this).val());
-        });
-        console.log(checkedbox);
-        var a = document.createElement('a');
-        a.href = '/api/bank_data/export_file/?ids=['+checkedbox+']';
-        a.click()
+        let selectedData = $('#table').DataTable().rows({selected: true}).data()
+        if(selectedData.length){
+            selectedData.each(function (e) {
+                checkedbox.push(e[1]);
+            })
+            var a = document.createElement('a');
+            a.href = '/api/bank_data/export_file/?ids=['+checkedbox+']';
+            a.click()
+        }else{
+            $('.modal-msg').html('请选择选择至少一条数据进行导出');
+            $('#tips').modal('show');
+        }
+
     });
 
 
@@ -62,7 +72,6 @@ $(() => {
             //maxViewMode: 0,
             //startDate: "now"
         }).on('changeDate', function() {
-            console.log(this.id,this.value);
             if(this.id === 'start-date'){
                 start = this.value;
             }
@@ -124,7 +133,6 @@ $(() => {
         }else{
             end = end.toString().replace(/-/g, "")
         }
-        console.log(accountNumber,range1,range2,start,end)
         let formData = new FormData();//初始化一个FormData对象
         formData.append('account_number', accountNumber);//将文件塞入FormData
         formData.append('trade_amount_min', range1);
@@ -153,7 +161,7 @@ $(() => {
             responseText.data.forEach(function(d) {
                 htmlstr += `
                     <tr>
-                        <td><label><input class="datachoose" type="checkbox" value=${d.pk} /></label> </td>
+                        <td></td>
                         <td>${d.pk}</td>
                         <td>${d.fields.ACCOUNT_NAME}</td>
                         <td>${d.fields.ACCOUNT_NUMBER}</td>
@@ -172,40 +180,20 @@ $(() => {
                     </tr>
                 `;
             });
-
-            //$('.search-result >p').hide();
-            //$('.search-result >table').show();
-            //$('#table ').show();
             $('tbody').append(htmlstr);
-            //$('#table').show();
-            if ( $.fn.dataTable.isDataTable('#table' )) {
-                $('#table').DataTable().destroy();
-                // let scrollyHeight = ($(window).height() - 320).toString()+'px';
-                // $('#table').DataTable( {
-                //     "scrollY":scrollyHeight,
-                //     "scrollCollapse": true,
-                //     "order": [[ 7, "desc" ]],
-                //     "language": {"url": "../libs/css/DataTables-1.10.18/Chinese.lang"},
-                //     "columnDefs": [ 
-                //         {"targets": [0,1,2,3,4,5,6,8,9,11,12,13,14,15],"orderable": false},
-                //         {"targets": 9,"orderable": true},
-                //         {"targets":15,"width": "4%" },
-                //  ]
-                // });
-            }else {
-                let scrollyHeight = ($(window).height() - 320).toString()+'px';
-                $('#table').DataTable( {
-                    "scrollY":scrollyHeight,
-                    "scrollCollapse": true,
-                    "order": [[ 7, "desc" ]],
-                    "language": {"url": "../libs/css/DataTables-1.10.18/Chinese.lang"},
-                    "columnDefs": [ 
-                        {"targets": [0,1,2,3,4,5,6,8,9,11,12,13,14,15],"orderable": false},
-                        {"targets": 9,"orderable": true},
-                        {"targets":15,"width": "4%" },
-                 ]
-                });
-            }
+            let scrollyHeight = ($(window).height() - 320).toString()+'px';
+            $('#table').DataTable({
+                "scrollY":scrollyHeight,
+                "scrollCollapse": true,
+                "order": [[ 7, "desc" ]],
+                'select': 'multi',
+                "language": {"url": "../libs/css/DataTables-1.10.18/Chinese.lang"},
+                "columnDefs": [ 
+                    {"targets": [0,1,2,3,4,5,6,8,9,11,12,13,14,15],"orderable": false},
+                    {"targets":15,"width": "4%" },
+                    {orderable: false,className: 'select-checkbox',targets:0} 
+                ],
+            });
         }
     }
 
