@@ -22,7 +22,7 @@ $(() => {
                     let htmlstr = ``;
                     data.data.forEach(function(d) {
                         htmlstr += `
-                            <tr data-id="${d.id}">
+                            <tr data-id="${d.id}" class="n-table--hover">
                                 <td>${d.nsrsbh}</td>
                                 <td>${d.companyName}</td>
                                 <td>${d.bankAccountName}</td>

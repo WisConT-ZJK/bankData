@@ -141,6 +141,7 @@ $(() => {
         // 判断数据是否有.
         if(links.length <= 0 && linksLeft.length <= 0) {
             $('.chart >p').show();
+            $('button.show-all-hide-node, button.download-img').addClass('disabled');
             return;
         }
 
@@ -766,6 +767,7 @@ $(() => {
         }else {
             $('.chart >p').html('未提供银行账号无法查询关系图');
             $('.chart >p').show();
+            $('button.show-all-hide-node, button.download-img').addClass('disabled');
         }
     };
     init(startDate, endDate);

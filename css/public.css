@@ -1,34 +1,48 @@
-header {
+/* 网站字体 */
+html,
+body {
+    font: 14px/1.5 -apple-system,BlinkMacSystemFont,Helvetica Neue,PingFang SC,Microsoft YaHei,Source Han Sans SC,Noto Sans CJK SC,WenQuanYi Micro Hei,sans-serif;
+}
+
+.disabled {
+    pointer-events: none;
+}
+
+/* 网页公用头部 */
+.header {
     height: 55px;
     line-height: 55px;
     background-color: #090909;
 }
 
-header a {
+.header .header__nav >a {
     color: #fff;
     padding: 0 15px;
     font-size: 16px;
+    text-decoration: none;
 }
-header a:hover,
-header a.active {
+.header .header__nav >a:hover,
+.header .header__nav .header__nav--active {
     color: #49a8f4;
 }
 
-header .logo h4 {
+.header .header__logo h4,
+.header .header__welcome h4 {
     margin: 0;
     color: #fff;
     line-height: 55px;
 }
 
-.table-notek {
-    font-family: "Microsoft Yahei";
-}
-.table-notek,
-.table-notek td,
-.table-notek th {
-    border: 1px solid #ddd!important;
-}
-.table-notek {
+/* 定制表格样式 */
+.n-table {
     border-collapse: collapse;
+}
+.n-table--hover {
+    cursor: pointer;
+}
+.n-table,
+.n-table td,
+.n-table th {
+    border: 1px solid #ddd!important;
 }
 
