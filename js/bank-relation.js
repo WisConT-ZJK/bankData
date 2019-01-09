@@ -174,7 +174,7 @@ $(() => {
                 treeRWidth = treeWidth + (treeWidth / 2) * (l.lv - 1);
             }
         });       
-        // 设置右侧树的宽度.
+        // 设置左侧树的宽度.
         treeR = d3.tree().size([height, treeRWidth]);
 
         let root = stratify(links_data)
@@ -330,6 +330,9 @@ $(() => {
                         return '30%';
                     }
                     if(d.data.activity === 'buy') {
+                        if(d.data.extraBuy === 1) {
+                            return '35%';
+                        }
                         if(d.data.lv > 1) {
                             return '50%';
                         }
@@ -357,6 +360,24 @@ $(() => {
                 .attr('filter', function(d) {
                     if(d.data.lv === 0) {
                         return 'url(#solid)';
+                    }
+                })
+                .attr('topid', function(d) {
+                    if(d.data.lv > 0) {
+                        let par = d.parent;
+                        while(par.data.lv !== 0) {
+                            par = par.parent;
+                        }
+                        return par.data.account_number;
+                    }
+                })
+                .attr('secid', function(d) {
+                    if(d.data.lv > 0) {
+                        let par = d;
+                        while(par.data.lv !== 1) {
+                            par = par.parent;
+                        }
+                        return par.data.account_number;
                     }
                 })
                 .style('text-anchor', function(d) {
@@ -456,19 +477,21 @@ $(() => {
                         // 显示可疑资金.
                         $('.btn-operating .show-suspicious').on('click', function() {
                             chartPos = $('svg .g-box').attr('transform');
-                            
+                            console.log(d);
                             let params = {
+                                id: d.data.id,
+                                lv: d.data.lv,
                                 pri_yhzh: d.parent.data.account_number,
                                 sec_yhzh: d.data.account_number,
                                 yhzh: d.data.account_number,
-                                begin_date: '200909',
-                                end_date: '201909'
+                                // begin_date: '200909',
+                                // end_date: '201909'
                             };
                             $.ajax({
                                 type: 'GET',
                                 data: params,
-                                // url: '/api/bank_data/suspicious_trade/',
-                                url: '../js/mock/suspicious.json',
+                                url: '/api/bank_data/suspicious_trade/',
+                                // url: '../js/mock/suspicious.json',
                                 success: data => {
                                     if(data.status === 0 && data.data.id) {
                                         let isRepeat;
@@ -501,6 +524,9 @@ $(() => {
                                         }else {
                                             drawTreeChart(operatingData.in, operatingData.out);
                                         }
+                                    }else {
+                                        $('.modal-msg').html('可疑资金流向为空');
+                                        $('.modal').modal('show');
                                     }
                                 }
                             });
@@ -586,21 +612,25 @@ $(() => {
                 if (d.data.activity == 'buy') {
                     // closed loop.
                     if(d.data.extraBuy === 1) {
+                        console.log(d);
+                        let par = {};
+                        // while(par.id)
                         return `M ${d.parent.y + 25} , ${d.parent.x + 35}
-                                C ${d.parent.y -25} , ${d.flow.x}
-                                ${d.parent.y + 200} , ${d.flow.x + 200}
-                                ${d.flow.y + 10} , ${d.flow.x + 25}`;
-                        // return `M ${d.parent.y + 25} , ${d.parent.x}
-                        //         C ${d.parent.y -25} , ${d.flow.x}
-                        //         ${d.parent.y} , ${d.flow.x}
-                        //         ${d.flow.y + 10} , ${d.flow.x + 25}`;
+                                C ${d.parent.y -25} , ${d.x + 8}
+                                ${d.parent.y + 200} , ${d.x + 150}
+                                ${d.y + 10} , ${d.x + 25}`;
+                        // return `M ${d.y} , ${d.x}
+                        //         C ${d.parent.y + 200} , ${d.x}
+                        //         ${d.parent.y + 200} , ${d.parent.x + 100}
+                        //         ${d.parent.y} , ${d.parent.x + 100}
+                        //         T ${d.parent.y} , ${d.parent.x}`;
+
                     }
 
                     return `M ${d.parent.y} , ${d.parent.x}
-                        C ${d.parent.y + 210} , ${d.x}
-                        ${d.parent.y + 280} , ${d.x}
-                        ${d.y} , ${d.x}
-                        T ${d.y} , ${d.x}`;
+                        C ${d.parent.y + 200} , ${d.x}
+                        ${d.parent.y + 200} , ${d.x}
+                        ${d.y} , ${d.x}`;
                 }else {
                     return `M ${d.y} , ${d.x}
                         C ${d.parent.y - 100} , ${d.x}
@@ -621,8 +651,8 @@ $(() => {
                 end_date: '20190909',
                 begin_date: '20090909'
             },
-            // url: '../js/mock/relations.json',
-            url: '/api/bank_data/top_trade/',
+            url: '../js/mock/relations.json',
+            // url: '/api/bank_data/top_trade/',
             success: data => {
                 if(data.status === 0) {
                     // 先保存原始数据.
@@ -642,7 +672,35 @@ $(() => {
                         }
                     });
 
-                    drawTreeChart(operatingData.in, operatingData.out);
+                    drawTreeChart(operatingData.in, operatingData.out, [
+                        // 闭环1
+                        // {
+                        //     "pid": "91441900MA4UKCKT53S#buy",
+                        //     "id": "440301192309343#buy",
+                        //     "value": 13118.0,
+                        //     "activity": "buy",
+                        //     "type": "",
+                        //     "lv": 3,
+                        //     "account_name": "对方感到孤独",
+                        //     "account_number": "aas",
+                        //     "related_bank": "招商银行",
+                        //     "NSRSBH": "91441900MA4UKCKT8L",
+                        //     "DJXH": "unknown",
+                        //     "name": "一个公司"
+                        // },
+                        {
+                            "pid": "440300552135086#buy",
+                            "id": "91441900MA4UKCKT9S#buy",
+                            "value": 1098908.0,
+                            "activity": "buy",
+                            "type": "",
+                            "lv": 1,
+                            "account_name": "对方感到孤独",
+                            "account_number": "434535",
+                            "related_bank": "招商银行",
+                            "name": "我是可疑资金1"
+                        },
+                    ]);
                 }
             }
         });
