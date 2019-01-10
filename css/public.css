@@ -26,11 +26,22 @@ body {
     color: #49a8f4;
 }
 
-.header .header__logo h4,
-.header .header__welcome h4 {
+.header .header__logo h4 {
     margin: 0;
     color: #fff;
     line-height: 55px;
+}
+
+.header .header__welcome {
+    color: #fff;
+    text-align: right;
+}
+
+.header .header__welcome .fa-sign-out {
+    cursor: pointer;
+}
+.header .header__welcome .fa-sign-out:hover {
+    color: #49a8f4;
 }
 
 /* 定制表格样式 */

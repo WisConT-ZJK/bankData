@@ -4,12 +4,19 @@ $(() => {
         return;
     }
 
+    // 退出登录
+    $('.header__welcome .fa-sign-out').on('click', function() {
+        $('#logout').modal('show');
+        $('.confirm-logout').unbind('click');
+        $('.confirm-logout').on('click', logout);
+    });
+
     $('.search-btn').on('click', function() {
         let queryStr = $('#bank-search').val();
 
         if(!queryStr || /^\s*$/g.test(queryStr)) {
-            $('.modal-msg').html('请输入搜索内容！');
-            $('.modal').modal('show');
+            $('#s-tips .modal-msg').html('请输入搜索内容！');
+            $('#s-tips').modal('show');
             return;
         }
 

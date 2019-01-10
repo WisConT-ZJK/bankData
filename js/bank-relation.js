@@ -63,6 +63,12 @@ $(() => {
     // 日期查询.
     let startDate, endDate;
 
+    // 退出登录
+    $('.header__welcome .fa-sign-out').on('click', function() {
+        $('#logout').modal('show');
+        $('.confirm-logout').unbind('click');
+        $('.confirm-logout').on('click', logout);
+    });
 
     // 设置高度.
     $('.chart').css('height', $(window).height() - 254); // 减去的224为页面其他元素的高度和25px下边距.
@@ -389,8 +395,8 @@ $(() => {
                                 }else {
                                     $('.top-30-amount ul').empty();
                                     $('.top-30-amount').hide();
-                                    $('.modal-msg').html('暂无交易明细列表数据');
-                                    $('.modal').modal('show');
+                                    $('#tips-all .modal-msg').html('暂无交易明细列表数据');
+                                    $('#tips-all .modal').modal('show');
                                 }
                             }
                         }
@@ -579,8 +585,8 @@ $(() => {
                                         
                                         drawTreeChart(operatingData.in, operatingData.out, closedLoopData, s, e);
                                     }else {
-                                        $('.modal-msg').html('可疑资金流向为空');
-                                        $('.modal').modal('show');
+                                        $('#tips-all .modal-msg').html('可疑资金流向为空');
+                                        $('#tips-all .modal').modal('show');
                                     }
                                 }
                             });
@@ -805,7 +811,6 @@ $(() => {
                     }
                 },
                 error: err => {
-                    console.log(err);
                     $('.chart >p').show();
                     $('.chart >p').html('网络出现了一些错误，请重试');
                     $('.choose-date').addClass('choose-date--disabled');

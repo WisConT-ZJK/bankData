@@ -86,3 +86,24 @@ function toThousands(num) {
     arr[1] = arr[1].length === 1 ? arr[1] + 0 : arr[1];
     return arr.join('.');
 }
+
+/*
+ * @Author: notek 
+ * @Email: notek1314@gmail.com 
+ * @Date: 2018/01/07
+ * @Description: 退出登录.
+ * @return: null
+ * @params:
+ */
+function logout() {
+    $.ajax({
+        type: 'POST',
+        url: '/api/account/logout',
+        success: function(data) {
+            if(data.status === 0) {
+                sessionStorage.removeItem('user');
+                location.reload();
+            }
+        }
+    });
+}

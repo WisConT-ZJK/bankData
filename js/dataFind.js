@@ -1,5 +1,15 @@
 $(() => {
+    if(!checkLoginStatus()) {
+        location.href = 'login.html';
+        return;
+    }
 
+    // 退出登录
+    $('.header__welcome .fa-sign-out').on('click', function() {
+        $('#logout').modal('show');
+        $('.confirm-logout').unbind('click');
+        $('.confirm-logout').on('click', logout);
+    });
     
     //date.format
     Date.prototype.Format = function(fmt){ //author: meizz   

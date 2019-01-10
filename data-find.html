@@ -26,7 +26,11 @@
                 <a href="data-input.html"><i class="fa fa-database" style="font-size: 14px"></i> 数据导入</a>
             </nav>
             <div class="col-md-2 header__welcome">
-                <h4 style="text-align: right;"><span>欢迎您，<span class="username"></span></span></h4>
+                <span>
+                    欢迎您，<span class="username"></span>
+                    &nbsp;
+                    <i class="fa fa-sign-out"></i>
+                </span>
             </div>
         </header>
         <div class= "row " style="margin-top:40px;">
@@ -123,6 +127,25 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-dismiss="modal">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 退出登录 -->
+    <div class="modal fade" id="logout" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" id="myModalLabel">登出确认</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="modal-msg">是否确认要退出当前登录用户？</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary confirm-logout">确定</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
                 </div>
             </div>
         </div>
