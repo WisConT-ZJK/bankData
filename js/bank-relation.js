@@ -803,6 +803,13 @@ $(() => {
 
                         drawTreeChart(operatingData.in, operatingData.out, closedLoopData, s, e);
                     }
+                },
+                error: err => {
+                    console.log(err);
+                    $('.chart >p').show();
+                    $('.chart >p').html('网络出现了一些错误，请重试');
+                    $('.choose-date').addClass('choose-date--disabled');
+                    $('button.show-all-hide-node, button.download-img, .choose-date input').addClass('disabled');
                 }
             });
         }else {
