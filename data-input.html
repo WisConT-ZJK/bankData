@@ -45,50 +45,53 @@
                     </div>
 
                     <div class="col-md-6">
-                        <input type="file" id="fileInput"/>
-                        <div>
-                            <button class="btn btn-success btn-lg trigger-file"><i class="fa fa-upload"></i> 本地文件上传</button>
-                            <p class="choose-file-name"></p>
+                        <div class="row" id="select-box">
+                        <h4 style=" float:left" >选择银行类型:</h4>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <form>
+                                    <div class="form-group">
+                                        <select id="lunch" class="select-product selectpicker" data-live-search="true" title="选择银行类型">
+                                        <option value='标准格式'>标准格式</option>
+                                        <option value='福田银座'>福田银座</option>
+                                        <option value='工商银行'>工商银行</option>
+                                        <option value='光大银行'>光大银行</option>
+                                        <option value='广发银行'>广发银行</option>
+                                        <option value='华夏银行'>华夏银行</option>
+                                        <option value='建设银行'>建设银行</option>
+                                        <option value='交通银行'>交通银行</option>
+                                        <option value='民生银行'>民生银行</option>
+                                        <option value='宁波银行'>宁波银行</option>
+                                        <option value='农业银行'>农业银行</option>
+                                        <option value='平安银行'>平安银行</option>
+                                        <option value='浦发银行'>浦发银行</option>
+                                        <option value='农村商业银行'>农村商业银行</option>
+                                        <option value='兴业银行'>兴业银行</option>
+                                        <option value='招商银行'>招商银行</option>
+                                        <option value='中国银行'>中国银行</option>
+                                        <option value='中信银行'>中信银行</option>
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
-                        <!--<div>
-                            <button class="btn btn-default btn-lg " id="fileClear"><i ></i> 清空</button>
-                        </div>-->
                     </div>
                 </dd>
             </dl>
         </div>
-
-
-        <h4>选择银行类型</h4>
-        <!-- select -->
-            <div class="row" id="select-box">
-                <div class="col-md-3 col-sm-3 col-xs-3">
-                    <form>
-                        <div class="form-group">
-                            <select id="lunch" class="select-product selectpicker" data-live-search="true" title="选择银行类型">
-                            <option value='标准格式'>标准格式</option>
-                            <option value='福田银座'>福田银座</option>
-                            <option value='工商银行'>工商银行</option>
-                            <option value='光大银行'>光大银行</option>
-                            <option value='广发银行'>广发银行</option>
-                            <option value='华夏银行'>华夏银行</option>
-                            <option value='建设银行'>建设银行</option>
-                            <option value='交通银行'>交通银行</option>
-                            <option value='民生银行'>民生银行</option>
-                            <option value='宁波银行'>宁波银行</option>
-                            <option value='农业银行'>农业银行</option>
-                            <option value='平安银行'>平安银行</option>
-                            <option value='浦发银行'>浦发银行</option>
-                            <option value='农村商业银行'>农村商业银行</option>
-                            <option value='兴业银行'>兴业银行</option>
-                            <option value='招商银行'>招商银行</option>
-                            <option value='中国银行'>中国银行</option>
-                            <option value='中信银行'>中信银行</option>
-                            </select>
-                        </div>
-                    </form>
-                </div>
+        <div class="col-md-6">
+            <input type="file" id="fileInput"/>
+            <div>
+                <button class="btn btn-success btn-lg trigger-file"><i class="fa fa-upload"></i> 本地文件上传</button>
+                <p class="choose-file-name"></p>
             </div>
+            <!--<div>
+                <button class="btn btn-default btn-lg " id="fileClear"><i ></i> 清空</button>
+            </div>-->
+        </div>
+
+
+        <!-- select -->
+
             <div class="col-md-12" style="margin-top: 15px;">
                 <button type="submit" id="button" class="btn btn-primary">开始导入</button>
             </div>
@@ -101,7 +104,7 @@
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                 </div>
                 <div class="modal-body">
-                    <table class="table table-hover table-notek table-search" data-dismiss="modal">
+                    <table class="table table-notek table-search" >
                         <tbody></tbody>
                     </table>
                 </div>
