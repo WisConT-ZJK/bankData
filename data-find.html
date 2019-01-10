@@ -35,23 +35,24 @@
         </header>
         <div class= "row " style="margin-top:40px;">
             <div class="col-md-1">
-                <button class="btn btn-default btn-sm " id="outputExcel"> 导出EXCEL</button>
+                <button class="btn btn-primary btn-sm " id="outputExcel"> 导出EXCEL</button>
             </div>
             <div class="col-md-4">
-                <div class=" input-daterange" id="flight-datepicker">
+                <div class="form-inline input-daterange" id="flight-datepicker">
                     <label>选择时间期限</label>
-                    <input class="" type="text" id="start-date" name="start" placeholder="请选择开始时间" data-date-format="yyyy-mm-dd" readonly/>
+                    <input class="form-control" type="text" id="start-date" name="start" placeholder="请选择开始时间" data-date-format="yyyy-mm-dd" readonly/>
                     -
-                    <input class="" type="text" id="end-date" name="end" placeholder="请选择结束时间" data-date-format="yyyy-mm-dd" readonly/>
-                    <span><button class="btn btn-default btn-sm " id="clearDate"> 清空</button></span>
+                    <input class="form-control" type="text" id="end-date" name="end" placeholder="请选择结束时间" data-date-format="yyyy-mm-dd" readonly/>
+                    <span><button class="btn btn-primary btn-sm " id="clearDate"> 清空</button></span>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="" id="flight-datepicker">
+                <div class="form-inline" id="flight-datepicker">
                     <label>选择交易金额范围</label>
-                    <input class="" type="text" id="range1"  oninput="value=value.replace(/[^\d]/g,'')" placeholder="请输入金额下限" />
+                    <input class="form-control" type="text" id="range1"  oninput="value=value.replace(/[^\d]/g,'')" placeholder="请输入金额下限" />
                     -
-                    <input class="" type="text" id="range2" oninput="value=value.replace(/[^\d]/g,'')" placeholder="请输入金额上限" />
+                    <input class="form-control" type="text" id="range2" oninput="value=value.replace(/[^\d]/g,'')" placeholder="请输入金额上限" />
+                    <span><button class="btn btn-primary btn-sm " id="filter"> 筛选</button></span>
                     <span class="range-tips"></span>
                 </div>
             </div>
@@ -61,10 +62,7 @@
                 </div>
             </div> -->
             <div class="col-md-1">
-                <button class="btn btn-default btn-sm " id="filter"> 筛选</button>
-            </div>
-            <div class="col-md-1">
-                <button class="btn btn-default btn-sm " id="next"> 查看关系网</button>
+                <button class="btn btn-primary btn-sm " id="next"> 查看关系网</button>
             </div>
         </div>
 
