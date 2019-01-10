@@ -191,7 +191,7 @@ $(() => {
                 "scrollCollapse": true,
                 "order": [[ 7, "desc" ]],
                 'select': 'multi',
-                "language": {"url": "../libs/css/DataTables-1.10.18/Chinese.lang"},
+                "language": {"url": "../libs/css/DataTables-1.10.18/Chinese.lang.json"},
                 "columnDefs": [ 
                     {"targets": [0,1,2,3,4,5,6,8,9,11,12,13,14,15],"orderable": false},
                     {"targets":15,"width": "4%" },
