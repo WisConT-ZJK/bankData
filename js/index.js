@@ -42,11 +42,12 @@ $(() => {
                         let htmlstr = ``;
                         data.data.forEach(function(d) {
                             htmlstr += `
-                                <tr data-id="${d.id}" class="n-table--hover">
-                                    <td>${d.identity_number || '暂无'}</td>
-                                    <td>${d.account_name || '暂无'}</td>
-                                    <td>${d.account_number || '暂无'}</td>
-                                    <td>${d.bank_related || '暂无'}</td>
+                                <tr>
+                                    <td>${d.IDENTITY_NUMBER || '暂无'}</td>
+                                    <td>${d.ACCOUNT_NAME || '暂无'}</td>
+                                    <td>${d.ACCOUNT_NUMBER || '暂无'}</td>
+                                    <td>${d.BANK_RELATED || '暂无'}</td>
+                                    <td>${d.DEPOSIT_BANK || '暂无'}</td>
                                 </tr>
                             `;
                         });
@@ -58,7 +59,7 @@ $(() => {
                         $('.search-result >table tbody').empty();
                         $('.search-result >table tbody').append(htmlstr);
                         $('.search-result >table tbody tr').on('click', function() {
-                            window.location.href = '/data-find.html?data-id='+this.cells[2].innerText
+                            location.href = 'data-find.html?data-id='+this.cells[2].innerText
                         });
                     }else {
                         $('.search-result .ex-tips').show();

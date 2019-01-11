@@ -111,7 +111,7 @@ $(() => {
 
     //跳转到关系网页面按钮
     $('#next').click(function () {
-        window.location.href = '/bank-relation-chart.html?accountNumber='+accountNumber
+        location.href = 'bank-relation-chart.html?accountNumber='+accountNumber
     })
 
     //input取消提示
