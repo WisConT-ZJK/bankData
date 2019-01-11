@@ -9,6 +9,17 @@ $(() => {
         $('.confirm-logout').unbind('click');
         $('.confirm-logout').on('click', logout);
     });
+
+    //下载模板
+    $('#lunch').change(function() {
+        document.getElementById('download').innerHTML=$('.selectpicker').val()+'.xlsx';
+        document.getElementById('download').setAttribute('href','download/'+$('.selectpicker').val()+'.xlsx');
+        //href="download/标准格式.xlsx"
+    })
+
+    // function selectchange(){
+    //     document.getElementById("download").innerHTML="abcdefg";
+    // }
     
     let file;
     $('.trigger-file').on('click', function() {
@@ -31,12 +42,12 @@ $(() => {
     //     file.value = '';
     // })
     $('#button').click(function () {
-        if (!file){ 
-            $('.modal-msg2').html('请选择需上传文件');
-            $('#bankChoose').modal('show');
-        }else if (!$('.selectpicker').val()){
-            //alert('请选择银行');
+        if (!$('.selectpicker').val()){ 
             $('.modal-msg2').html('请选择银行');
+            $('#bankChoose').modal('show');
+        }else if (!file){
+            //alert('请选择银行');
+            $('.modal-msg2').html('请选择需上传文件');
             $('#bankChoose').modal('show');
         }else{
             $('.modal-msg3').html('&nbsp;&nbsp;&nbsp;&nbsp;文件名：'+file.name);
