@@ -58,7 +58,7 @@ $(() => {
                         $('.search-result >table tbody').empty();
                         $('.search-result >table tbody').append(htmlstr);
                         $('.search-result >table tbody tr').on('click', function() {
-                            window.location.href = '/data-find.html?data-id='+this.cells[2].innerText
+                            location.href = 'data-find.html?data-id='+this.cells[2].innerText
                         });
                     }else {
                         $('.search-result .ex-tips').show();
