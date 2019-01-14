@@ -106,6 +106,7 @@ $(() => {
             $('#table').DataTable().destroy();
         }
         $('tbody').empty();
+        $('.search-result .ex-tips').show();
         getTabledata();
     })
 
@@ -194,6 +195,7 @@ $(() => {
                     </tr>
                 `;
             });
+            $('.search-result .ex-tips').hide();
             $('tbody').append(htmlstr);
             let scrollyHeight = ($(window).height() - 320).toString()+'px';
             $('#table').DataTable({
