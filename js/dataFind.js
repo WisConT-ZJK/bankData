@@ -230,7 +230,10 @@ $(() => {
                 "columnDefs": [ 
                     {"targets": [0,1,2,3,4,5,6,8,9,11,12,13,14,15],"orderable": false},
                     {"targets":15,"width": "4%" },
-                    {orderable: false,className: 'select-checkbox',targets:0} 
+                    {orderable: false,className: 'select-checkbox',targets:0},
+                    { "width": "6.25%", "targets": [,3,4,5,7,8,9,10,11,12,13,14,15] },
+                    { "width": "5%", "targets": [0,,6,] },
+                    { "width": "4%", "targets": [,1,2] }
                 ],
             });
         }
