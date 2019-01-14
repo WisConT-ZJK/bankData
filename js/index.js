@@ -20,6 +20,12 @@ $(() => {
             return;
         }
 
+        //datatable  destroy
+        if ( $.fn.dataTable.isDataTable('#table' )) {
+            $('#table').DataTable().destroy();
+            $('.search-result >table tbody').empty();
+        }
+
         $('.search-result .ex-tips').show();
         $('.search-result .ex-tips').html('搜索中请稍等...');
         $('button.search-btn').addClass('disabled');
@@ -58,8 +64,39 @@ $(() => {
 
                         $('.search-result >table tbody').empty();
                         $('.search-result >table tbody').append(htmlstr);
-                        $('.search-result >table tbody tr').on('click', function() {
-                            //location.href = 'data-find.html?data-id='+this.cells[2].innerText
+
+                        let scrollyHeight = ($(window).height() - 320).toString()+'px';
+                        $('#table').DataTable({
+                            "scrollY":scrollyHeight,
+                            "scrollCollapse": true,
+                            "searching": false,
+                            "ordering": false,
+                            "language": {
+                                "sProcessing":   "处理中...",
+                                "sLengthMenu":   "显示 _MENU_ 项结果",
+                                "sZeroRecords":  "没有匹配结果",
+                                "sInfo":         "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+                                "sInfoEmpty":    "显示第 0 至 0 项结果，共 0 项",
+                                "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+                                "sInfoPostFix":  "",
+                                "sSearch":       "搜索:",
+                                "sUrl":          "",
+                                "sEmptyTable":     "表中数据为空",
+                                "sLoadingRecords": "载入中...",
+                                "sInfoThousands":  ",",
+                                "oPaginate": {
+                                    "sFirst":    "首页",
+                                    "sPrevious": "上页",
+                                    "sNext":     "下页",
+                                    "sLast":     "末页"
+                                },
+                                "oAria": {
+                                    "sSortAscending":  ": 以升序排列此列",
+                                    "sSortDescending": ": 以降序排列此列"
+                                }
+                            },
+                        });
+                        $('#table').on('click','tbody tr' ,function() {
                             window.open('data-find.html?data-id='+this.cells[2].innerText)
                         });
                     }else {

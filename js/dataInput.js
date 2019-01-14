@@ -12,30 +12,32 @@ $(() => {
 
     //下载模板
     $('#lunch').change(function() {
-        document.getElementById('download').innerHTML=$('.selectpicker').val()+'.xlsx';
-        document.getElementById('download').setAttribute('href','download/'+$('.selectpicker').val()+'.xlsx');
-        //href="download/标准格式.xlsx"
+        let bankName=$('.selectpicker').val()
+        if (bankName=="工商银行"||bankName=="平安银行"||bankName=="招商银行"){
+            document.getElementById('download').innerHTML=bankName+'.rar';
+            document.getElementById('download').setAttribute('href','download/'+bankName+'.rar');
+        }else{
+            document.getElementById('download').innerHTML=bankName+'.xlsx';
+            document.getElementById('download').setAttribute('href','download/'+bankName+'.xlsx');
+        }
     })
 
     // function selectchange(){
     //     document.getElementById("download").innerHTML="abcdefg";
     // }
     
-    let file;
+    let file,filetype;
     $('.trigger-file').on('click', function() {
         $('#fileInput').trigger('click');
     });
     $('#fileInput').on('change', function() {
         file = $(this)[0].files[0];
+        filetype=file.name.split('.').pop()
+        if (filetype !="xls" &&filetype !="xlsx"){
+            $('.modal-msg2').html('文件格式不支持');
+            $('#bankChoose').modal('show');
+        }
         $('.choose-file-name').html(file.name);
-
-        // 处理文件数据.
-        // todo.
-
-        // 点击导入按钮上传.
-        // todo.
-
-        // rest.
         $(this).val('');
     });
     // $('#fileClear').on('click', function() {
@@ -56,6 +58,11 @@ $(() => {
         }
     });
     $('#inputConfirm').click(function () {
+        if (filetype !="xls" &&filetype !="xlsx"){
+            $('.modal-msg2').html('文件格式不支持'+filetype);
+            $('#bankChoose').modal('show');
+            return;
+        }
             var formData = new FormData();//初始化一个FormData对象
             formData.append('file', file);//将文件塞入FormData
             formData.append('bank_name', $('.selectpicker').val());
