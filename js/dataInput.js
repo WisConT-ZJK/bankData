@@ -66,6 +66,8 @@ $(() => {
             var formData = new FormData();//初始化一个FormData对象
             formData.append('file', file);//将文件塞入FormData
             formData.append('bank_name', $('.selectpicker').val());
+            $('.modal-msg5').html(file.name+',正在上传...');
+            $('#uploadingTips').modal('show');
             //console.log(formData);
             $.ajax({
                 url: '/api/bank_data/upload/',
@@ -82,6 +84,7 @@ $(() => {
                     for(var fail in responseText.data[1]) {
                         failLength++;
                     }
+                    $('#uploadingTips').modal('hide');
                     if (failLength){
                         // $('.modal-msg1').html(failMeg);
                         // $('#resultOutput').modal('show');

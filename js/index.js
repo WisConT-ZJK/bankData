@@ -97,7 +97,10 @@ $(() => {
                             },
                         });
                         $('#table').on('click','tbody tr' ,function() {
+                            let sel = getSelection().toString();
+                            if(!sel){
                             window.open('data-find.html?data-id='+this.cells[2].innerText)
+                            }
                         });
                     }else {
                         $('.search-result .ex-tips').show();
